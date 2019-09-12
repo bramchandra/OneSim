@@ -35,7 +35,7 @@ public class MessageDeleteReport extends Report implements MessageListener {
         deleteMessage = new HashMap<DTNHost, Integer>();
         nrofDropped = 0;
         nrofRemoved = 0;
-     //   this.hopCounts = new ArrayList<Integer>();
+        //   this.hopCounts = new ArrayList<Integer>();
     }
 
     @Override
@@ -50,11 +50,11 @@ public class MessageDeleteReport extends Report implements MessageListener {
 
     @Override
     public void messageDeleted(Message m, DTNHost where, boolean dropped) {
-        if(deleteMessage.containsKey(where)){
-            deleteMessage.put(where, deleteMessage.get(where)+1);
-        }
-        else{
-            deleteMessage.put(where,1);
+
+        if (deleteMessage.containsKey(where)) {
+            deleteMessage.put(where, deleteMessage.get(where) + 1);
+        } else {
+            deleteMessage.put(where, 1);
         }
 //        nrofRemoved++;
 
@@ -78,7 +78,7 @@ public class MessageDeleteReport extends Report implements MessageListener {
             Integer value = entry.getValue();
             write(key + "\t" + value);
         }
-        write(""+nrofRemoved);
+        write("" + nrofRemoved);
         super.done();
     }
 
