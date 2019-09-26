@@ -34,12 +34,12 @@ public class DecisionEngineSprayAndWaitRouter implements RoutingDecisionEngine {
      */
     public static final String MSG_COUNT_PROPERTY = SPRAYANDWAIT_NS + "."
             + "copies";
-
+    protected int msgTtl;
     protected int initialNrofCopies;
     protected boolean isBinary;
 
     public DecisionEngineSprayAndWaitRouter(Settings s) {
-       
+
         Settings snwSettings = new Settings(SPRAYANDWAIT_NS);
 
         initialNrofCopies = snwSettings.getInt(NROF_COPIES);
@@ -47,7 +47,7 @@ public class DecisionEngineSprayAndWaitRouter implements RoutingDecisionEngine {
     }
 
     public DecisionEngineSprayAndWaitRouter(DecisionEngineSprayAndWaitRouter r) {
-       
+
         this.initialNrofCopies = r.initialNrofCopies;
         this.isBinary = r.isBinary;
     }
@@ -69,7 +69,7 @@ public class DecisionEngineSprayAndWaitRouter implements RoutingDecisionEngine {
 
     @Override
     public boolean newMessage(Message m) {
-
+        
     }
 
     @Override
