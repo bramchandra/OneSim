@@ -15,7 +15,7 @@ import routing.RoutingDecisionEngine;
  *
  * @author BramChandra
  */
-public class ImplementSprayAndWaitRouter implements RoutingDecisionEngine {
+public class DecisionEngineSprayAndWaitRouter implements RoutingDecisionEngine {
 
     /**
      * identifier for the initial number of copies setting ({@value})
@@ -38,11 +38,16 @@ public class ImplementSprayAndWaitRouter implements RoutingDecisionEngine {
     protected int initialNrofCopies;
     protected boolean isBinary;
 
-    public ImplementSprayAndWaitRouter(Settings s) {
+    public DecisionEngineSprayAndWaitRouter(Settings s) {
+       
+        Settings snwSettings = new Settings(SPRAYANDWAIT_NS);
+
+        initialNrofCopies = snwSettings.getInt(NROF_COPIES);
+        isBinary = snwSettings.getBoolean(BINARY_MODE);
     }
 
-    public ImplementSprayAndWaitRouter(ImplementSprayAndWaitRouter r) {
-        super(r);
+    public DecisionEngineSprayAndWaitRouter(DecisionEngineSprayAndWaitRouter r) {
+       
         this.initialNrofCopies = r.initialNrofCopies;
         this.isBinary = r.isBinary;
     }
@@ -94,7 +99,7 @@ public class ImplementSprayAndWaitRouter implements RoutingDecisionEngine {
 
     @Override
     public RoutingDecisionEngine replicate() {
-        return new ImplementSprayAndWaitRouter(this);
+        return new DecisionEngineSprayAndWaitRouter(this);
     }
 
 }
