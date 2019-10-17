@@ -13,7 +13,7 @@ import routing.RoutingDecisionEngine;
 
 /**
  *
- * @author BramChandra
+ * @author Windows
  */
 public class DecisionEngineSprayAndWaitRouter implements RoutingDecisionEngine {
 
@@ -34,72 +34,92 @@ public class DecisionEngineSprayAndWaitRouter implements RoutingDecisionEngine {
      */
     public static final String MSG_COUNT_PROPERTY = SPRAYANDWAIT_NS + "."
             + "copies";
-    protected int msgTtl;
+
+    protected static final double DEFAULT_TIMEDIFF = 300;
+
     protected int initialNrofCopies;
     protected boolean isBinary;
 
     public DecisionEngineSprayAndWaitRouter(Settings s) {
 
-        Settings snwSettings = new Settings(SPRAYANDWAIT_NS);
-
-        initialNrofCopies = snwSettings.getInt(NROF_COPIES);
-        isBinary = snwSettings.getBoolean(BINARY_MODE);
+        initialNrofCopies = s.getInt(NROF_COPIES);
+        isBinary = s.getBoolean(BINARY_MODE);
     }
 
-    public DecisionEngineSprayAndWaitRouter(DecisionEngineSprayAndWaitRouter r) {
+    public DecisionEngineSprayAndWaitRouter(DecisionEngineSprayAndWaitRouter snw) {
 
-        this.initialNrofCopies = r.initialNrofCopies;
-        this.isBinary = r.isBinary;
+        this.initialNrofCopies = snw.initialNrofCopies;
+        this.isBinary = snw.isBinary;
     }
 
     @Override
     public void connectionUp(DTNHost thisHost, DTNHost peer) {
-
     }
 
     @Override
     public void connectionDown(DTNHost thisHost, DTNHost peer) {
-
     }
 
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
-
     }
 
     @Override
     public boolean newMessage(Message m) {
-        
+        m.addProperty(MSG_COUNT_PROPERTY, initialNrofCopies);
+        return true;
     }
 
     @Override
     public boolean isFinalDest(Message m, DTNHost aHost) {
+        Integer numofCopies = (Integer) m.getProperty(MSG_COUNT_PROPERTY);
+        numofCopies = (int) Math.ceil(numofCopies / 2.0);
+        m.updateProperty(MSG_COUNT_PROPERTY, numofCopies);
 
+        return m.getTo() == aHost;
     }
 
     @Override
     public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
-
+        return m.getTo() != thisHost;
     }
 
     @Override
     public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (m.getTo() == otherHost) {
+            return true;
+        }
+
+        int numofCopies = (Integer) m.getProperty(MSG_COUNT_PROPERTY);
+        if (numofCopies > 1) {
+            return true;
+        }
+
+        return false;
+
     }
 
     @Override
     public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int numofCopies = (Integer) m.getProperty(MSG_COUNT_PROPERTY);
+
+        if (numofCopies > 1) {
+            numofCopies /= 2;
+        } else {
+            return true;
+        }
+
+        m.updateProperty(MSG_COUNT_PROPERTY, numofCopies);
+        return false;
     }
 
     @Override
     public boolean shouldDeleteOldMessage(Message m, DTNHost hostReportingOld) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return m.getTo() == hostReportingOld;
     }
 
     @Override
     public RoutingDecisionEngine replicate() {
         return new DecisionEngineSprayAndWaitRouter(this);
     }
-
 }
