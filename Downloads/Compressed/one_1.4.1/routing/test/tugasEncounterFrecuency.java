@@ -17,8 +17,7 @@ import java.util.Map;
 import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
-import routing.community.BubbleRap;
-import routing.community.CommunityDetection;
+
 import routing.community.Duration;
 
 /**
@@ -66,7 +65,7 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
             history.add(new Duration(time, etime));
         }
 
-        startTimestamps.remove(peer);
+//        startTimestamps.remove(peer);
     }
 
     @Override
@@ -86,12 +85,12 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
 
     @Override
     public boolean isFinalDest(Message m, DTNHost aHost) {
-        return true;
+        return m.getTo()==aHost;
     }
 
     @Override
     public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
-       return true;
+       return m.getTo()!=thisHost;
     }
 
     @Override
@@ -103,19 +102,15 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
         tugasEncounterFrecuency de = getOtherDecisionEngine(otherHost);
         if (de.connHistory.containsKey(dest)) {
             encounterPeer = de.connHistory.get(dest).size();
-        } else if (this.connHistory.containsKey(dest)) {
+        } if (this.connHistory.containsKey(dest)) {
             encounterThis = this.connHistory.get(dest).size();
         }
-        if (encounterPeer > encounterThis) {
-            return true;
-        } else {
-            return false;
-        }
+        return encounterPeer > encounterThis;
     }
 
     @Override
     public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost) {
-        return true;
+        return m.getTo()==otherHost;
     }
 
     @Override

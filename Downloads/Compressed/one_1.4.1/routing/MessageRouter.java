@@ -64,7 +64,7 @@ public abstract class MessageRouter {
 	public static final int DENIED_TTL = -3;
 	/** Receive return value for unspecified reason */
 	public static final int DENIED_UNSPECIFIED = -999;
-	
+	public static final int DENIED_DELIVERED = -4;
 	List<MessageListener> mListeners;
 	/** The messages being transferred with msgID_hostName keys */
 	private HashMap<String, Message> incomingMessages;

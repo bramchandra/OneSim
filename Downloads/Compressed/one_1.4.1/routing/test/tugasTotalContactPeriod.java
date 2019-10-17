@@ -25,22 +25,23 @@ import routing.community.Duration;
  *
  * @author jarkom
  */
-public class tugasTotalContact implements RoutingDecisionEngine {
+public class tugasTotalContactPeriod implements RoutingDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, List<Duration>> connHistory;
-    protected Map<DTNHost, Integer> rata;
+    protected Map<DTNHost, Double> rata;
 
-    int encounterPeer;
-    int encounterThis;
+    double encounterPeer;
+    double encounterThis;
 
-    public tugasTotalContact(Settings s) {
+    public tugasTotalContactPeriod(Settings s) {
 
     }
 
-    public tugasTotalContact(tugasTotalContact t) {
+    public tugasTotalContactPeriod(tugasTotalContactPeriod t) {
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
+        rata = new HashMap<DTNHost, Double>();
     }
 
     @Override
@@ -65,15 +66,20 @@ public class tugasTotalContact implements RoutingDecisionEngine {
         // add this connection to the list
         if (etime - time > 0) {
             history.add(new Duration(time, etime));
+            if (rata.containsKey(peer)) {
+                rata.put(peer, (rata.get(peer) + (etime - time)));
+            } else {
+                rata.put(peer, 0.0);
+            }
+        } else {
+            startTimestamps.remove(peer);
         }
-
-        startTimestamps.remove(peer);
     }
 
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
         DTNHost myHost = con.getOtherNode(peer);
-        tugasEncounterFrecuency de = this.getOtherDecisionEngine(peer);
+        tugasTotalContactPeriod de = this.getOtherDecisionEngine(peer);
 
         this.startTimestamps.put(peer, SimClock.getTime());
         de.startTimestamps.put(myHost, SimClock.getTime());
@@ -87,12 +93,12 @@ public class tugasTotalContact implements RoutingDecisionEngine {
 
     @Override
     public boolean isFinalDest(Message m, DTNHost aHost) {
-        return true;
+        return  m.getTo()==aHost;
     }
 
     @Override
     public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
-       return true;
+        return  m.getTo()!=thisHost;
     }
 
     @Override
@@ -101,12 +107,13 @@ public class tugasTotalContact implements RoutingDecisionEngine {
             return true;
         }
         DTNHost dest = m.getTo();
-        tugasEncounterFrecuency de = getOtherDecisionEngine(otherHost);
+        tugasTotalContactPeriod de = getOtherDecisionEngine(otherHost);
         if (de.connHistory.containsKey(dest)) {
-            encounterPeer = de.connHistory.get(dest).size();
-          
+
+            encounterPeer = de.rata.get(dest);
+
         } else if (this.connHistory.containsKey(dest)) {
-            encounterThis = this.connHistory.get(dest).size();
+            encounterThis = this.rata.get(dest);
         }
         if (encounterPeer > encounterThis) {
             return true;
@@ -117,7 +124,7 @@ public class tugasTotalContact implements RoutingDecisionEngine {
 
     @Override
     public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost) {
-        return true;
+        return m.getTo()==otherHost;
     }
 
     @Override
@@ -127,14 +134,14 @@ public class tugasTotalContact implements RoutingDecisionEngine {
 
     @Override
     public RoutingDecisionEngine replicate() {
-        return new tugasTotalContact(this);
+        return new tugasTotalContactPeriod(this);
     }
 
-    private tugasEncounterFrecuency getOtherDecisionEngine(DTNHost h) {
+    private tugasTotalContactPeriod getOtherDecisionEngine(DTNHost h) {
         MessageRouter otherRouter = h.getRouter();
         assert otherRouter instanceof DecisionEngineRouter : "This router only works "
                 + " with other routers of same type";
 
-        return (tugasEncounterFrecuency) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+        return (tugasTotalContactPeriod) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
 }
