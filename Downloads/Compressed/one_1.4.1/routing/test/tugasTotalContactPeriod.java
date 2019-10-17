@@ -71,9 +71,10 @@ public class tugasTotalContactPeriod implements RoutingDecisionEngine {
             } else {
                 rata.put(peer, 0.0);
             }
-        } else {
-            startTimestamps.remove(peer);
-        }
+        } 
+//        else {
+//            startTimestamps.remove(peer);
+//        }
     }
 
     @Override
