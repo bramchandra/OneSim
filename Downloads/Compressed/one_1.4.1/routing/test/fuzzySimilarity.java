@@ -17,30 +17,28 @@ import java.util.Map;
 import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
-import routing.community.BubbleRap;
-import routing.community.CommunityDetection;
+
 import routing.community.Duration;
 
 /**
  *
  * @author jarkom
  */
-public class tugasAverageContactPeriod implements RoutingDecisionEngine {
+public class fuzzySimilarity implements RoutingDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, List<Duration>> connHistory;
-    protected Map<DTNHost, Double> ratarata;
-    double encounterPeer;
-    double encounterThis;
 
-    public tugasAverageContactPeriod(Settings s) {
+    int encounterPeer;
+    int encounterThis;
+
+    public fuzzySimilarity(Settings s) {
 
     }
 
-    public tugasAverageContactPeriod(tugasAverageContactPeriod t) {
+    public fuzzySimilarity(fuzzySimilarity t) {
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
-        ratarata = new HashMap<DTNHost, Double>();
     }
 
     @Override
@@ -58,26 +56,22 @@ public class tugasAverageContactPeriod implements RoutingDecisionEngine {
         if (!connHistory.containsKey(peer)) {
             history = new LinkedList<Duration>();
             connHistory.put(peer, history);
-            ratarata.put(peer, 0.0);
         } else {
             history = connHistory.get(peer);
-            ratarata.put(peer, (ratarata.get(peer) + (etime - time)));
         }
 
         // add this connection to the list
         if (etime - time > 0) {
             history.add(new Duration(time, etime));
         }
+
+//        startTimestamps.remove(peer);
     }
-//        else {
-//            startTimestamps.remove(peer);
-//        }
 
-
-@Override
-        public void doExchangeForNewConnection(Connection con, DTNHost peer) {
+    @Override
+    public void doExchangeForNewConnection(Connection con, DTNHost peer) {
         DTNHost myHost = con.getOtherNode(peer);
-        tugasAverageContactPeriod de = this.getOtherDecisionEngine(peer);
+        fuzzySimilarity de = this.getOtherDecisionEngine(peer);
 
         this.startTimestamps.put(peer, SimClock.getTime());
         de.startTimestamps.put(myHost, SimClock.getTime());
@@ -85,61 +79,55 @@ public class tugasAverageContactPeriod implements RoutingDecisionEngine {
     }
 
     @Override
-        public boolean newMessage(Message m) {
+    public boolean newMessage(Message m) {
         return true;
     }
 
     @Override
-        public boolean isFinalDest(Message m, DTNHost aHost) {
-        return m.getTo() == aHost;
+    public boolean isFinalDest(Message m, DTNHost aHost) {
+        return m.getTo()==aHost;
     }
 
     @Override
-        public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
-        return m.getTo() != thisHost;
+    public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
+       return m.getTo()!=thisHost;
     }
 
     @Override
-        public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
+    public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
         if (m.getTo() == otherHost) {
             return true;
         }
         DTNHost dest = m.getTo();
-        tugasAverageContactPeriod de = getOtherDecisionEngine(otherHost);
+        fuzzySimilarity de = getOtherDecisionEngine(otherHost);
         if (de.connHistory.containsKey(dest)) {
-            encounterPeer = de.ratarata.get(dest) / de.connHistory.get(dest).size();
-
-        } else if (this.connHistory.containsKey(dest)) {
-
-            encounterThis = this.ratarata.get(dest) / this.connHistory.get(dest).size();
+            encounterPeer = de.connHistory.get(dest).size();
+        } if (this.connHistory.containsKey(dest)) {
+            encounterThis = this.connHistory.get(dest).size();
         }
-        if (encounterPeer > encounterThis) {
-            return true;
-        } else {
-            return false;
-        }
+        return encounterPeer > encounterThis;
     }
 
     @Override
-        public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost) {
-        return m.getTo() == otherHost;
+    public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost) {
+        return m.getTo()==otherHost;
     }
 
     @Override
-        public boolean shouldDeleteOldMessage(Message m, DTNHost hostReportingOld) {
+    public boolean shouldDeleteOldMessage(Message m, DTNHost hostReportingOld) {
         return true;
     }
 
     @Override
-        public RoutingDecisionEngine replicate() {
-        return new tugasAverageContactPeriod(this);
+    public RoutingDecisionEngine replicate() {
+        return new fuzzySimilarity(this);
     }
 
-    private tugasAverageContactPeriod getOtherDecisionEngine(DTNHost h) {
+    private fuzzySimilarity getOtherDecisionEngine(DTNHost h) {
         MessageRouter otherRouter = h.getRouter();
         assert otherRouter instanceof DecisionEngineRouter : "This router only works "
                 + " with other routers of same type";
 
-        return (tugasAverageContactPeriod) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+        return (fuzzySimilarity) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
 }

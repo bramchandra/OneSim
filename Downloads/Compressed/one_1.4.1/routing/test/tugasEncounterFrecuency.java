@@ -63,6 +63,7 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
         // add this connection to the list
         if (etime - time > 0) {
             history.add(new Duration(time, etime));
+            connHistory.get(peer).add((Duration) history);
         }
 
 //        startTimestamps.remove(peer);
