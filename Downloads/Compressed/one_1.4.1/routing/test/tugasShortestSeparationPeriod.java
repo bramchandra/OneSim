@@ -50,7 +50,7 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
 
     @Override
     public void connectionDown(DTNHost thisHost, DTNHost peer) {
-                
+
         double time = startTimestamps.get(peer);
         double etime = SimClock.getTime();
 
@@ -59,11 +59,11 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
         if (!connHistory.containsKey(peer)) {
             history = new LinkedList<Duration>();
             connHistory.put(peer, history);
-            
+
         } else {
-            history = connHistory.get(peer);
-            history.add(new Duration(time, etime));
-            connHistory.put(peer, history);
+//            history = connHistory.get(peer);
+//            history.add(new Duration(time, etime));
+            connHistory.get(peer).add(new Duration(time, etime));
         }
 
         // add this connection to the list
@@ -71,7 +71,6 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
 //            history.add(new Duration(time, etime));
 //            
 //        }
-
 //        startTimestamps.remove(peer);
     }
 
@@ -92,12 +91,12 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
 
     @Override
     public boolean isFinalDest(Message m, DTNHost aHost) {
-        return m.getTo()==aHost;
+        return m.getTo() == aHost;
     }
 
     @Override
     public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
-       return m.getTo()!=thisHost;
+        return m.getTo() != thisHost;
     }
 
     @Override
@@ -107,10 +106,20 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
         }
         DTNHost dest = m.getTo();
         tugasShortestSeparationPeriod de = getOtherDecisionEngine(otherHost);
-        if (de.connHistory.containsKey(dest)) {                                
-            encounterPeer=(de.connHistory.get(dest).get(1).start)-(de.connHistory.get(dest).get(0).end);            
-        } if (this.connHistory.containsKey(dest)) {
-            encounterThis=(this.connHistory.get(dest).get(1).start)-(this.connHistory.get(dest).get(0).end);
+        if (de.connHistory.containsKey(dest)) {
+            if (de.connHistory.get(dest).size() > 1) {
+                encounterPeer = (de.connHistory.get(dest).get(1).start) - (de.connHistory.get(dest).get(0).end);
+            }else{
+                encounterPeer=0;
+            }
+        }
+        if (this.connHistory.containsKey(dest)) {
+            if(this.connHistory.get(dest).size()>1){
+                encounterThis = (this.connHistory.get(dest).get(1).start) - (this.connHistory.get(dest).get(0).end);
+            }else{
+                encounterThis=0;
+            }
+            
 //            encounterThis = this.connHistory.get(dest).size();
         }
         return encounterPeer > encounterThis;
@@ -118,7 +127,7 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
 
     @Override
     public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost) {
-        return m.getTo()==otherHost;
+        return m.getTo() == otherHost;
     }
 
     @Override

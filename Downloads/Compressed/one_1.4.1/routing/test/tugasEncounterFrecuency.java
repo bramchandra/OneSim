@@ -57,14 +57,14 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
             history = new LinkedList<Duration>();
             connHistory.put(peer, history);
         } else {
-            history = connHistory.get(peer);
+            connHistory.get(peer).add(new Duration(time, etime));
         }
 
         // add this connection to the list
-        if (etime - time > 0) {
-            history.add(new Duration(time, etime));
-            connHistory.get(peer).add((Duration) history);
-        }
+//        if (etime - time > 0) {
+////            history.add(new Duration(time, etime));
+//            connHistory.get(peer).add(new Duration(time, etime));
+//        }
 
 //        startTimestamps.remove(peer);
     }

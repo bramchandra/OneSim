@@ -61,13 +61,15 @@ public class tugasAverageContactPeriod implements RoutingDecisionEngine {
             ratarata.put(peer, 0.0);
         } else {
             history = connHistory.get(peer);
+            connHistory.get(peer).add(new Duration(time, etime));
             ratarata.put(peer, (ratarata.get(peer) + (etime - time)));
         }
 
         // add this connection to the list
-        if (etime - time > 0) {
-            history.add(new Duration(time, etime));
-        }
+//        if (etime - time > 0) {
+//            history.add(new Duration(time, etime));
+//            
+//        }
     }
 //        else {
 //            startTimestamps.remove(peer);

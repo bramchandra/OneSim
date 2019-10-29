@@ -28,7 +28,7 @@ import routing.community.Duration;
 public class tugasTotalContactPeriod implements RoutingDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
-    protected Map<DTNHost, List<Duration>> connHistory;
+    protected Map<DTNHost, Double> connHistory;
     protected Map<DTNHost, Double> rata;
 
     double encounterPeer;
@@ -40,7 +40,7 @@ public class tugasTotalContactPeriod implements RoutingDecisionEngine {
 
     public tugasTotalContactPeriod(tugasTotalContactPeriod t) {
         startTimestamps = new HashMap<DTNHost, Double>();
-        connHistory = new HashMap<DTNHost, List<Duration>>();
+        connHistory = new HashMap<DTNHost, Double>();
         rata = new HashMap<DTNHost, Double>();
     }
 
@@ -55,23 +55,23 @@ public class tugasTotalContactPeriod implements RoutingDecisionEngine {
         double etime = SimClock.getTime();
 
         // Find or create the connection history list
-        List<Duration> history;
+//        List<Duration> history;
         if (!connHistory.containsKey(peer)) {
-            history = new LinkedList<Duration>();
-            connHistory.put(peer, history);
+//            history = new LinkedList<Duration>();
+            connHistory.put(peer, 0.0);
         } else {
-            history = connHistory.get(peer);
+            connHistory.put(peer, (connHistory.get(peer) + (etime - time)));
         }
 
         // add this connection to the list
-        if (etime - time > 0) {
-            history.add(new Duration(time, etime));
-            if (rata.containsKey(peer)) {
-                rata.put(peer, (rata.get(peer) + (etime - time)));
-            } else {
-                rata.put(peer, 0.0);
-            }
-        } 
+//        if (etime - time > 0) {
+//            history.add(new Duration(time, etime));
+//            if (rata.containsKey(peer)) {
+//                rata.put(peer, (rata.get(peer) + (etime - time)));
+//            } else {
+//                rata.put(peer, 0.0);
+//            }
+//        } 
 //        else {
 //            startTimestamps.remove(peer);
 //        }
@@ -111,10 +111,10 @@ public class tugasTotalContactPeriod implements RoutingDecisionEngine {
         tugasTotalContactPeriod de = getOtherDecisionEngine(otherHost);
         if (de.connHistory.containsKey(dest)) {
 
-            encounterPeer = de.rata.get(dest);
+            encounterPeer = de.connHistory.get(dest);
 
         } else if (this.connHistory.containsKey(dest)) {
-            encounterThis = this.rata.get(dest);
+            encounterThis = this.connHistory.get(dest);
         }
         if (encounterPeer > encounterThis) {
             return true;
