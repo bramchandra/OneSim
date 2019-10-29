@@ -60,7 +60,7 @@ public class tugasAverageContactPeriod implements RoutingDecisionEngine {
             connHistory.put(peer, history);
             ratarata.put(peer, 0.0);
         } else {
-            history = connHistory.get(peer);
+//            history = connHistory.get(peer);
             connHistory.get(peer).add(new Duration(time, etime));
             ratarata.put(peer, (ratarata.get(peer) + (etime - time)));
         }

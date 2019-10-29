@@ -25,20 +25,21 @@ import routing.community.Duration;
  *
  * @author jarkom
  */
-public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
+public class fuzzy implements RoutingDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
+    protected Map<DTNHost, Double> ratarata;
     protected Map<DTNHost, List<Duration>> connHistory;
     protected Map<DTNHost, List<Double>> durasi;
 
     double encounterPeer;
     double encounterThis;
 
-    public tugasShortestSeparationPeriod(Settings s) {
+    public fuzzy(Settings s) {
 
     }
 
-    public tugasShortestSeparationPeriod(tugasShortestSeparationPeriod t) {
+    public fuzzy(fuzzy t) {
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
     }
@@ -59,11 +60,12 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
         if (!connHistory.containsKey(peer)) {
             history = new LinkedList<Duration>();
             connHistory.put(peer, history);
-
+            ratarata.put(peer, 0.0);
         } else {
 //            history = connHistory.get(peer);
 //            history.add(new Duration(time, etime));
             connHistory.get(peer).add(new Duration(time, etime));
+            ratarata.put(peer, (ratarata.get(peer) + (etime - time)));
         }
 
         // add this connection to the list
@@ -77,7 +79,7 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
         DTNHost myHost = con.getOtherNode(peer);
-        tugasShortestSeparationPeriod de = this.getOtherDecisionEngine(peer);
+        fuzzy de = this.getOtherDecisionEngine(peer);
 
         this.startTimestamps.put(peer, SimClock.getTime());
         de.startTimestamps.put(myHost, SimClock.getTime());
@@ -105,25 +107,46 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
             return true;
         }
         DTNHost dest = m.getTo();
-        tugasShortestSeparationPeriod de = getOtherDecisionEngine(otherHost);
+        fuzzy de = getOtherDecisionEngine(otherHost);
         if (de.connHistory.containsKey(dest)) {
             double hasil = 0;
-//            if (de.connHistory.get(dest).size() > 1) {
-                for (int i = 0; i < de.connHistory.get(dest).size(); i++) {
-//                    System.out.println(de.connHistory.get(dest).size());
-                    hasil = hasil + (de.connHistory.get(dest).get(i).end) - (de.connHistory.get(dest).get(i).start);
-//                }
+            double closeness = 0;
+            double temp = 0;
+            double variansi = 0;
+
+            //CARI VARIANSI
+            double mean = (ratarata.get(dest) / de.connHistory.get(dest).size());
+            for (int i = 0; i < de.connHistory.get(dest).size(); i++) {
+                double data = (de.connHistory.get(dest).get(i).end) - de.connHistory.get(dest).get(i).start;
+                temp += (data - mean) * (data - mean);
             }
-            encounterPeer = SimClock.getTime()-hasil;
+            variansi = temp / de.connHistory.get(dest).size();
+            //CARI VARIANSI
+
+            //CARI CLOSENESS / NORMALISASI AVG
+            double rataShortestSeparation = (SimClock.getTime() - hasil) / de.connHistory.get(dest).size();
+            closeness = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / 2 * variansi);
+            //CARI CLOSENESS / NORMALISASI AVG
+
         }
         if (this.connHistory.containsKey(dest)) {
             double hasil = 0;
-//            if (this.connHistory.get(dest).size() > 1) {
-                for (int i = 0; i < this.connHistory.get(dest).size(); i++) {
-                    hasil = hasil + (this.connHistory.get(dest).get(i).end) - (this.connHistory.get(dest).get(i).start);
-                }
-//            }
-            encounterThis =SimClock.getTime()- hasil;
+            double closeness = 0;
+            double temp = 0;
+            double variansi = 0;
+            //CARI VARIANSI
+            double mean = (ratarata.get(dest) / this.connHistory.get(dest).size());
+            for (int i = 0; i < this.connHistory.get(dest).size(); i++) {
+                double data = (this.connHistory.get(dest).get(i).end) - this.connHistory.get(dest).get(i).start;
+                temp += (data - mean) * (data - mean);
+            }
+            variansi = temp / de.connHistory.get(dest).size();
+            //CARI VARIANSI
+
+            //CARI CLOSENESS / NORMALISASI AVG
+            double rataShortestSeparation = (SimClock.getTime() - hasil) / this.connHistory.get(dest).size();
+            closeness = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / 2 * variansi);
+            //CARI CLOSENESS / NORMALISASI AVG
 
         }
         return encounterPeer < encounterThis;
@@ -141,14 +164,14 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
 
     @Override
     public RoutingDecisionEngine replicate() {
-        return new tugasShortestSeparationPeriod(this);
+        return new fuzzy(this);
     }
 
-    private tugasShortestSeparationPeriod getOtherDecisionEngine(DTNHost h) {
+    private fuzzy getOtherDecisionEngine(DTNHost h) {
         MessageRouter otherRouter = h.getRouter();
         assert otherRouter instanceof DecisionEngineRouter : "This router only works "
                 + " with other routers of same type";
 
-        return (tugasShortestSeparationPeriod) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+        return (fuzzy) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
 }
