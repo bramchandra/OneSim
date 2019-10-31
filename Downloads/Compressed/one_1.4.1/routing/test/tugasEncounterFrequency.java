@@ -19,12 +19,13 @@ import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 
 import routing.community.Duration;
+import routing.community.FrequencyDecisionEngine;
 
 /**
  *
  * @author jarkom
  */
-public class tugasEncounterFrecuency implements RoutingDecisionEngine {
+public class tugasEncounterFrequency implements RoutingDecisionEngine,FrequencyDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, List<Duration>> connHistory;
@@ -32,11 +33,11 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
     int encounterPeer;
     int encounterThis;
 
-    public tugasEncounterFrecuency(Settings s) {
+    public tugasEncounterFrequency(Settings s) {
 
     }
 
-    public tugasEncounterFrecuency(tugasEncounterFrecuency t) {
+    public tugasEncounterFrequency(tugasEncounterFrequency t) {
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
     }
@@ -57,14 +58,15 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
             history = new LinkedList<Duration>();
             connHistory.put(peer, history);
         } else {
-            connHistory.get(peer).add(new Duration(time, etime));
+            history=connHistory.get(peer);
+//            connHistory.get(peer).add(new Duration(time, etime));
         }
 
         // add this connection to the list
-//        if (etime - time > 0) {
-////            history.add(new Duration(time, etime));
-//            connHistory.get(peer).add(new Duration(time, etime));
-//        }
+        if (etime - time > 0) {
+            history.add(new Duration(time, etime));
+            connHistory.put(peer, history);
+        }
 
 //        startTimestamps.remove(peer);
     }
@@ -72,7 +74,7 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
         DTNHost myHost = con.getOtherNode(peer);
-        tugasEncounterFrecuency de = this.getOtherDecisionEngine(peer);
+        tugasEncounterFrequency de = this.getOtherDecisionEngine(peer);
 
         this.startTimestamps.put(peer, SimClock.getTime());
         de.startTimestamps.put(myHost, SimClock.getTime());
@@ -100,7 +102,7 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
             return true;
         }
         DTNHost dest = m.getTo();
-        tugasEncounterFrecuency de = getOtherDecisionEngine(otherHost);
+        tugasEncounterFrequency de = getOtherDecisionEngine(otherHost);
         if (de.connHistory.containsKey(dest)) {
             encounterPeer = de.connHistory.get(dest).size();
         } if (this.connHistory.containsKey(dest)) {
@@ -121,14 +123,19 @@ public class tugasEncounterFrecuency implements RoutingDecisionEngine {
 
     @Override
     public RoutingDecisionEngine replicate() {
-        return new tugasEncounterFrecuency(this);
+        return new tugasEncounterFrequency(this);
     }
 
-    private tugasEncounterFrecuency getOtherDecisionEngine(DTNHost h) {
+    private tugasEncounterFrequency getOtherDecisionEngine(DTNHost h) {
         MessageRouter otherRouter = h.getRouter();
         assert otherRouter instanceof DecisionEngineRouter : "This router only works "
                 + " with other routers of same type";
 
-        return (tugasEncounterFrecuency) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+        return (tugasEncounterFrequency) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+    }
+
+    @Override
+    public Map<DTNHost, List<Duration>> getFrequency() {
+        return this.connHistory;
     }
 }

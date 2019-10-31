@@ -113,6 +113,8 @@ public class fuzzy implements RoutingDecisionEngine {
             double closeness = 0;
             double temp = 0;
             double variansi = 0;
+            
+            //RATARATA SEPARATION
 
             //CARI VARIANSI
             double mean = (ratarata.get(dest) / de.connHistory.get(dest).size());
@@ -124,7 +126,7 @@ public class fuzzy implements RoutingDecisionEngine {
             //CARI VARIANSI
 
             //CARI CLOSENESS / NORMALISASI AVG
-            double rataShortestSeparation = (SimClock.getTime() - hasil) / de.connHistory.get(dest).size();
+            double rataShortestSeparation = (SimClock.getTime() - mean) / de.connHistory.get(dest).size();
             closeness = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / 2 * variansi);
             //CARI CLOSENESS / NORMALISASI AVG
 
