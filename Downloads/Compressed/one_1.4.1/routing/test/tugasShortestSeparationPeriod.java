@@ -43,14 +43,15 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
         connHistory = new HashMap<DTNHost, List<Duration>>();
     }
 //    private int getLastConnection(List)
+
     @Override
     public void connectionUp(DTNHost thisHost, DTNHost peer) {
         // Find or create the connection history list
         double time = 0;
-        if(startTimestamps.containsKey(peer)){
+        if (startTimestamps.containsKey(peer)) {
             time = startTimestamps.get(peer);
         }
-        
+
         double etime = SimClock.getTime();
         List<Duration> history;
         if (!connHistory.containsKey(peer)) {
@@ -82,7 +83,6 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
 
 //        this.startTimestamps.put(peer, SimClock.getTime());
 //        de.startTimestamps.put(myHost, SimClock.getTime());
-
     }
 
     @Override
