@@ -46,43 +46,41 @@ public class fuzzy implements RoutingDecisionEngine {
 
     @Override
     public void connectionUp(DTNHost thisHost, DTNHost peer) {
+        // Find or create the connection history list
+        double time = 0;
+        if (startTimestamps.containsKey(peer)) {
+            time = startTimestamps.get(peer);
+        }
 
+        double etime = SimClock.getTime();
+        List<Duration> history;
+        if (!connHistory.containsKey(peer)) {
+            history = new LinkedList<Duration>();
+//            connHistory.put(peer, history);
+
+        } else {
+            history = connHistory.get(peer);
+
+        }
+
+//         add this connection to the list
+        if (etime - time > 0) {
+            history.add(new Duration(time, etime));
+
+        }
+        connHistory.put(peer, history);
     }
 
     @Override
     public void connectionDown(DTNHost thisHost, DTNHost peer) {
-
-        double time = startTimestamps.get(peer);
-        double etime = SimClock.getTime();
-
-        // Find or create the connection history list
-        List<Duration> history;
-        if (!connHistory.containsKey(peer)) {
-            history = new LinkedList<Duration>();
-            connHistory.put(peer, history);
-            ratarata.put(peer, 0.0);
-        } else {
-//            history = connHistory.get(peer);
-//            history.add(new Duration(time, etime));
-            connHistory.get(peer).add(new Duration(time, etime));
-            ratarata.put(peer, (ratarata.get(peer) + (etime - time)));
-        }
-
-        // add this connection to the list
-//        if (etime - time > 0) {
-//            history.add(new Duration(time, etime));
-//            
-//        }
-//        startTimestamps.remove(peer);
+        fuzzy de = this.getOtherDecisionEngine(peer);
+        startTimestamps.put(peer, SimClock.getTime());
     }
 
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
-        DTNHost myHost = con.getOtherNode(peer);
-        fuzzy de = this.getOtherDecisionEngine(peer);
-
-        this.startTimestamps.put(peer, SimClock.getTime());
-        de.startTimestamps.put(myHost, SimClock.getTime());
+//        DTNHost myHost = con.getOtherNode(peer);
+//        fuzzy de = this.getOtherDecisionEngine(peer);
 
     }
 
@@ -108,50 +106,51 @@ public class fuzzy implements RoutingDecisionEngine {
         }
         DTNHost dest = m.getTo();
         fuzzy de = getOtherDecisionEngine(otherHost);
-        if (de.connHistory.containsKey(dest)) {
-            double hasil = 0;
-            double closeness = 0;
-            double temp = 0;
-            double variansi = 0;
-            
-            //RATARATA SEPARATION
+        encounterThis=this.getVariance(getList(dest));
+        encounterPeer=de.getVariance(getList(dest));
+        
+        System.out.println("Peer"+encounterPeer);
+        System.out.println("This"+encounterThis);
+        return encounterPeer > encounterThis;
+    }
 
-            //CARI VARIANSI
-            double mean = (ratarata.get(dest) / de.connHistory.get(dest).size());
-            for (int i = 0; i < de.connHistory.get(dest).size(); i++) {
-                double data = (de.connHistory.get(dest).get(i).end) - de.connHistory.get(dest).get(i).start;
-                temp += (data - mean) * (data - mean);
-            }
-            variansi = temp / de.connHistory.get(dest).size();
-            //CARI VARIANSI
 
-            //CARI CLOSENESS / NORMALISASI AVG
-            double rataShortestSeparation = (SimClock.getTime() - mean) / de.connHistory.get(dest).size();
-            closeness = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / 2 * variansi);
-            //CARI CLOSENESS / NORMALISASI AVG
-
+    private double getVariance(List<Duration> nodes) {
+        Iterator<Duration> duration = nodes.iterator();
+        double temp = 0;
+        double mean = getAverageShortestSeparation(nodes);
+        while (duration.hasNext()) {
+            Duration d = duration.next();
+            temp += ((d.end-d.start) - mean) * ((d.end-d.start) - mean);
         }
-        if (this.connHistory.containsKey(dest)) {
-            double hasil = 0;
-            double closeness = 0;
-            double temp = 0;
-            double variansi = 0;
-            //CARI VARIANSI
-            double mean = (ratarata.get(dest) / this.connHistory.get(dest).size());
-            for (int i = 0; i < this.connHistory.get(dest).size(); i++) {
-                double data = (this.connHistory.get(dest).get(i).end) - this.connHistory.get(dest).get(i).start;
-                temp += (data - mean) * (data - mean);
-            }
-            variansi = temp / de.connHistory.get(dest).size();
-            //CARI VARIANSI
 
-            //CARI CLOSENESS / NORMALISASI AVG
-            double rataShortestSeparation = (SimClock.getTime() - hasil) / this.connHistory.get(dest).size();
-            closeness = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / 2 * variansi);
-            //CARI CLOSENESS / NORMALISASI AVG
+        return temp / nodes.size();
+    }
 
+    private List<Duration> getList(DTNHost nodes) {
+        if (connHistory.containsKey(nodes)) {
+            return connHistory.get(nodes);
+        } else {
+            List<Duration> d = new LinkedList<>();
+            return d;
         }
-        return encounterPeer < encounterThis;
+    }
+
+    private double getCloseness(DTNHost nodes) {
+        double rataShortestSeparation = getAverageShortestSeparation(getList(nodes));
+        double variansi = getVariance(getList(nodes));
+
+        return Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / (2 * variansi));
+    }
+
+    private double getAverageShortestSeparation(List<Duration> nodes) {
+        Iterator<Duration> duration = nodes.iterator();
+        double hasil = 0;
+        while (duration.hasNext()) {
+            Duration d = duration.next();
+            hasil += (d.end - d.start);
+        }
+        return hasil / nodes.size();
     }
 
     @Override

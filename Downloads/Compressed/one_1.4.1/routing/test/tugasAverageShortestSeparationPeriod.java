@@ -42,65 +42,72 @@ public class tugasAverageShortestSeparationPeriod implements RoutingDecisionEngi
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
     }
+//    private int getLastConnection(List)
 
     @Override
     public void connectionUp(DTNHost thisHost, DTNHost peer) {
+        // Find or create the connection history list
+        double time = 0;
+        if (startTimestamps.containsKey(peer)) {
+            time = startTimestamps.get(peer);
+        }
 
+        double etime = SimClock.getTime();
+        List<Duration> history;
+        if (!connHistory.containsKey(peer)) {
+            history = new LinkedList<Duration>();
+//            connHistory.put(peer, history);
+
+        } else {
+            history = connHistory.get(peer);
+
+        }
+
+//         add this connection to the list
+        if (etime - time > 0) {
+            history.add(new Duration(time, etime));
+
+        }
+        connHistory.put(peer, history);
     }
 
     @Override
     public void connectionDown(DTNHost thisHost, DTNHost peer) {
-
-        double time = startTimestamps.get(peer);
-        double etime = SimClock.getTime();
-
-        // Find or create the connection history list
-        List<Duration> history;
-        if (!connHistory.containsKey(peer)) {
-            history = new LinkedList<Duration>();
-            connHistory.put(peer, history);
-
-        } else {
-//            history = connHistory.get(peer);
-//            history.add(new Duration(time, etime));
-            connHistory.get(peer).add(new Duration(time, etime));
-        }
-
-        // add this connection to the list
-//        if (etime - time > 0) {
-//            history.add(new Duration(time, etime));
-//            
-//        }
-//        startTimestamps.remove(peer);
+        tugasAverageShortestSeparationPeriod de = this.getOtherDecisionEngine(peer);  
+        startTimestamps.put(peer, SimClock.getTime());
     }
 
     @Override
-    public void doExchangeForNewConnection(Connection con, DTNHost peer) {
+    public void doExchangeForNewConnection(Connection con, DTNHost peer
+    ) {
         DTNHost myHost = con.getOtherNode(peer);
         tugasAverageShortestSeparationPeriod de = this.getOtherDecisionEngine(peer);
 
-        this.startTimestamps.put(peer, SimClock.getTime());
-        de.startTimestamps.put(myHost, SimClock.getTime());
-
+//        this.startTimestamps.put(peer, SimClock.getTime());
+//        de.startTimestamps.put(myHost, SimClock.getTime());
     }
 
     @Override
-    public boolean newMessage(Message m) {
+    public boolean newMessage(Message m
+    ) {
         return true;
     }
 
     @Override
-    public boolean isFinalDest(Message m, DTNHost aHost) {
+    public boolean isFinalDest(Message m, DTNHost aHost
+    ) {
         return m.getTo() == aHost;
     }
 
     @Override
-    public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
+    public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost
+    ) {
         return m.getTo() != thisHost;
     }
 
     @Override
-    public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
+    public boolean shouldSendMessageToHost(Message m, DTNHost otherHost
+    ) {
         if (m.getTo() == otherHost) {
             return true;
         }
@@ -108,36 +115,31 @@ public class tugasAverageShortestSeparationPeriod implements RoutingDecisionEngi
         tugasAverageShortestSeparationPeriod de = getOtherDecisionEngine(otherHost);
         if (de.connHistory.containsKey(dest)) {
             double hasil = 0;
-            double closeness = 0;
-//            if (de.connHistory.get(dest).size() > 1) {
             for (int i = 0; i < de.connHistory.get(dest).size(); i++) {
-//                    System.out.println(de.connHistory.get(dest).size());
-                hasil = hasil + (de.connHistory.get(dest).get(i).end) - (de.connHistory.get(dest).get(i).start);
-//                }
+                hasil += (de.connHistory.get(dest).get(i).end) - (de.connHistory.get(dest).get(i).start);
             }
-            
-            encounterPeer = (SimClock.getTime() - hasil) / de.connHistory.get(dest).size();
+            encounterPeer = hasil/de.connHistory.get(dest).size();
         }
         if (this.connHistory.containsKey(dest)) {
             double hasil = 0;
-//            if (this.connHistory.get(dest).size() > 1) {
             for (int i = 0; i < this.connHistory.get(dest).size(); i++) {
-                hasil = hasil + (this.connHistory.get(dest).get(i).end) - (this.connHistory.get(dest).get(i).start);
+                hasil += (this.connHistory.get(dest).get(i).end) - (this.connHistory.get(dest).get(i).start);
             }
-//            }
-            encounterThis = (SimClock.getTime() - hasil) / this.connHistory.get(dest).size();
+            encounterThis = hasil/this.connHistory.get(dest).size();
 
         }
         return encounterPeer < encounterThis;
     }
 
     @Override
-    public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost) {
+    public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost
+    ) {
         return m.getTo() == otherHost;
     }
 
     @Override
-    public boolean shouldDeleteOldMessage(Message m, DTNHost hostReportingOld) {
+    public boolean shouldDeleteOldMessage(Message m, DTNHost hostReportingOld
+    ) {
         return true;
     }
 

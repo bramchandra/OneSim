@@ -56,7 +56,7 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
         List<Duration> history;
         if (!connHistory.containsKey(peer)) {
             history = new LinkedList<Duration>();
-            connHistory.put(peer, history);
+//            connHistory.put(peer, history);
 
         } else {
             history = connHistory.get(peer);
@@ -66,12 +66,14 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
 //         add this connection to the list
         if (etime - time > 0) {
             history.add(new Duration(time, etime));
-            connHistory.put(peer, history);
+
         }
+        connHistory.put(peer, history);
     }
 
     @Override
     public void connectionDown(DTNHost thisHost, DTNHost peer) {
+        tugasShortestSeparationPeriod de = this.getOtherDecisionEngine(peer);  
         startTimestamps.put(peer, SimClock.getTime());
     }
 
@@ -113,14 +115,14 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
         tugasShortestSeparationPeriod de = getOtherDecisionEngine(otherHost);
         if (de.connHistory.containsKey(dest)) {
             double hasil = 0;
-            for (int i = 0; i < de.connHistory.size(); i++) {
+            for (int i = 0; i < de.connHistory.get(dest).size(); i++) {
                 hasil += (de.connHistory.get(dest).get(i).end) - (de.connHistory.get(dest).get(i).start);
             }
             encounterPeer = hasil;
         }
         if (this.connHistory.containsKey(dest)) {
             double hasil = 0;
-            for (int i = 0; i < this.connHistory.size(); i++) {
+            for (int i = 0; i < this.connHistory.get(dest).size(); i++) {
                 hasil += (this.connHistory.get(dest).get(i).end) - (this.connHistory.get(dest).get(i).start);
             }
             encounterThis = hasil;

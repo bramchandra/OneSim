@@ -59,7 +59,7 @@ public class tugasTotalContactPeriod implements RoutingDecisionEngine {
         List<Duration> history;
         if (!connHistory.containsKey(peer)) {
             history = new LinkedList<Duration>();
-            connHistory.put(peer, history);
+//            connHistory.put(peer, history);
         } else {
             history=connHistory.get(peer);
 //            connHistory.put(peer, (connHistory.get(peer) + (etime - time)));
@@ -68,8 +68,9 @@ public class tugasTotalContactPeriod implements RoutingDecisionEngine {
         // add this connection to the list
         if (etime - time > 0) {
             history.add(new Duration(time, etime));
-            connHistory.put(peer, history);
+            
         } 
+        connHistory.put(peer, history);
         
     }
 
