@@ -18,8 +18,9 @@ import java.util.Map;
 import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
-
 import routing.community.Duration;
+import net.sourceforge.jFuzzyLogic.FIS;
+
 
 /**
  *
@@ -42,6 +43,17 @@ public class fuzzy implements RoutingDecisionEngine {
     public fuzzy(fuzzy t) {
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
+    }
+    private FIS loadFcl(String loc){
+        String fileName = "fcl/tipper.fcl";
+        FIS fis = FIS.load(fileName,true);
+
+        // Error while loading?
+        if( fis == null ) { 
+            System.err.println("Can't load file: '" + fileName + "'");
+            return null;
+        }
+        return fis;
     }
 
     @Override
@@ -76,6 +88,7 @@ public class fuzzy implements RoutingDecisionEngine {
         fuzzy de = this.getOtherDecisionEngine(peer);
         startTimestamps.put(peer, SimClock.getTime());
     }
+    
 
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
@@ -93,6 +106,16 @@ public class fuzzy implements RoutingDecisionEngine {
     public boolean isFinalDest(Message m, DTNHost aHost) {
         return m.getTo() == aHost;
     }
+//    private double defuzzyfication(DTNHost nodes){
+//        double closeness = getCloseness(nodes);
+//        double variance = getVariance(nodes);
+//        FIS fcl = loadFcl("fcl/FuzzyControlLanguage.fcl");     
+//        fcl.setVariable("closeness", closeness);
+//        fcl.setVariable("variance", variance);
+//        fcl.evaluate();
+//        
+//        
+//    }
 
     @Override
     public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
@@ -104,19 +127,23 @@ public class fuzzy implements RoutingDecisionEngine {
         if (m.getTo() == otherHost) {
             return true;
         }
+          
         DTNHost dest = m.getTo();
         fuzzy de = getOtherDecisionEngine(otherHost);
-        encounterThis=this.getVariance(getList(dest));
-        encounterPeer=de.getVariance(getList(dest));
-        
+        encounterThis=this.getVariance(dest);
+        encounterPeer=de.getVariance(dest);
+//        fcl.setVariable("closeness", this.getCloseness(dest));
+//        fcl.setVariable("closeness", de.getCloseness(dest));
+//        fcl.evaluate();
         System.out.println("Peer"+encounterPeer);
         System.out.println("This"+encounterThis);
         return encounterPeer > encounterThis;
     }
 
 
-    private double getVariance(List<Duration> nodes) {
-        Iterator<Duration> duration = nodes.iterator();
+    private double getVariance(DTNHost nodes) {
+        List<Duration> list = getList(nodes);
+        Iterator<Duration> duration = list.iterator();
         double temp = 0;
         double mean = getAverageShortestSeparation(nodes);
         while (duration.hasNext()) {
@@ -124,7 +151,7 @@ public class fuzzy implements RoutingDecisionEngine {
             temp += ((d.end-d.start) - mean) * ((d.end-d.start) - mean);
         }
 
-        return temp / nodes.size();
+        return temp / list.size();
     }
 
     private List<Duration> getList(DTNHost nodes) {
@@ -133,24 +160,26 @@ public class fuzzy implements RoutingDecisionEngine {
         } else {
             List<Duration> d = new LinkedList<>();
             return d;
+            
         }
     }
 
     private double getCloseness(DTNHost nodes) {
-        double rataShortestSeparation = getAverageShortestSeparation(getList(nodes));
-        double variansi = getVariance(getList(nodes));
+        double rataShortestSeparation = getAverageShortestSeparation(nodes);
+        double variansi = getVariance(nodes);
 
         return Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / (2 * variansi));
     }
 
-    private double getAverageShortestSeparation(List<Duration> nodes) {
-        Iterator<Duration> duration = nodes.iterator();
+    private double getAverageShortestSeparation(DTNHost nodes) {
+        List<Duration> list = getList(nodes);
+        Iterator<Duration> duration = list.iterator();
         double hasil = 0;
         while (duration.hasNext()) {
             Duration d = duration.next();
             hasil += (d.end - d.start);
         }
-        return hasil / nodes.size();
+        return hasil / list.size();
     }
 
     @Override
