@@ -20,18 +20,19 @@ import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.Duration;
 import net.sourceforge.jFuzzyLogic.FIS;
+import routing.community.VarianceDecisionEngine;
 
 
 /**
  *
  * @author jarkom
  */
-public class fuzzy implements RoutingDecisionEngine {
+public class fuzzy implements RoutingDecisionEngine,VarianceDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, Double> ratarata;
     protected Map<DTNHost, List<Duration>> connHistory;
-    protected Map<DTNHost, List<Double>> durasi;
+    protected Map<DTNHost, Double> variance;
 
     double encounterPeer;
     double encounterThis;
@@ -132,6 +133,7 @@ public class fuzzy implements RoutingDecisionEngine {
         fuzzy de = getOtherDecisionEngine(otherHost);
         encounterThis=this.getVariance(dest);
         encounterPeer=de.getVariance(dest);
+        variance.put(otherHost, this.getVariance(dest));
 //        fcl.setVariable("closeness", this.getCloseness(dest));
 //        fcl.setVariable("closeness", de.getCloseness(dest));
 //        fcl.evaluate();
@@ -141,7 +143,7 @@ public class fuzzy implements RoutingDecisionEngine {
     }
 
 
-    private double getVariance(DTNHost nodes) {
+    public double getVariance(DTNHost nodes) {
         List<Duration> list = getList(nodes);
         Iterator<Duration> duration = list.iterator();
         double temp = 0;
@@ -154,7 +156,7 @@ public class fuzzy implements RoutingDecisionEngine {
         return temp / list.size();
     }
 
-    private List<Duration> getList(DTNHost nodes) {
+    public List<Duration> getList(DTNHost nodes) {
         if (connHistory.containsKey(nodes)) {
             return connHistory.get(nodes);
         } else {
@@ -171,7 +173,7 @@ public class fuzzy implements RoutingDecisionEngine {
         return Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / (2 * variansi));
     }
 
-    private double getAverageShortestSeparation(DTNHost nodes) {
+    public double getAverageShortestSeparation(DTNHost nodes) {
         List<Duration> list = getList(nodes);
         Iterator<Duration> duration = list.iterator();
         double hasil = 0;
@@ -203,5 +205,10 @@ public class fuzzy implements RoutingDecisionEngine {
                 + " with other routers of same type";
 
         return (fuzzy) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+    }
+
+    @Override
+    public Map<DTNHost, Double> getVariance() {
+        return this.variance;
     }
 }
