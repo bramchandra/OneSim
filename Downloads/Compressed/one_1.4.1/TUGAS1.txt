@@ -3,7 +3,7 @@
 #
 
 ## Scenario settings
-Scenario.name = TUGAS1
+Scenario.name = haggle
 Scenario.simulateConnections = false
 Scenario.updateInterval = 0.1
 # 43200s == 12h
@@ -53,7 +53,8 @@ Scenario.nrofHostGroups = 1
 
 # Common settings for all groups
 Group.movementModel = StationaryMovement
-Group.router = EpidemicRouter
+Group.router = DecisionEngineRouter
+DecisionEngineRouter.decisionEngine =test.fuzzy
 Group.bufferSize = 5M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
@@ -113,7 +114,7 @@ Report.warmup = 0
 # default directory of reports (can be overridden per Report with output setting)
 Report.reportDir = reports/
 # Report classes to load
-Report.report1 = MessageStatsReport
+Report.report1 = VariansiTiapPeerReport
 
 ## Default settings for some routers settings
 #ProphetRouter.secondsInTimeUnit = 30

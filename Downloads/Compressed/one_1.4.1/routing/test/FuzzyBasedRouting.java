@@ -27,7 +27,7 @@ import routing.community.VarianceDecisionEngine;
  *
  * @author jarkom
  */
-public class fuzzy implements RoutingDecisionEngine,VarianceDecisionEngine {
+public class FuzzyBasedRouting implements RoutingDecisionEngine,VarianceDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, Double> ratarata;
@@ -37,11 +37,11 @@ public class fuzzy implements RoutingDecisionEngine,VarianceDecisionEngine {
     double encounterPeer;
     double encounterThis;
 
-    public fuzzy(Settings s) {
+    public FuzzyBasedRouting(Settings s) {
 
     }
 
-    public fuzzy(fuzzy t) {
+    public FuzzyBasedRouting(FuzzyBasedRouting t) {
         startTimestamps = new HashMap<DTNHost, Double>();
         variance = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
@@ -87,7 +87,7 @@ public class fuzzy implements RoutingDecisionEngine,VarianceDecisionEngine {
 
     @Override
     public void connectionDown(DTNHost thisHost, DTNHost peer) {
-        fuzzy de = this.getOtherDecisionEngine(peer);
+        FuzzyBasedRouting de = this.getOtherDecisionEngine(peer);
         startTimestamps.put(peer, SimClock.getTime());
     }
     
@@ -131,7 +131,7 @@ public class fuzzy implements RoutingDecisionEngine,VarianceDecisionEngine {
         }
           
         DTNHost dest = m.getTo();
-        fuzzy de = getOtherDecisionEngine(otherHost);
+        FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
         encounterThis=this.getVariance(dest);
         encounterPeer=de.getVariance(dest);
         variance.put(otherHost, this.getVariance(dest));
@@ -197,15 +197,15 @@ public class fuzzy implements RoutingDecisionEngine,VarianceDecisionEngine {
 
     @Override
     public RoutingDecisionEngine replicate() {
-        return new fuzzy(this);
+        return new FuzzyBasedRouting(this);
     }
 
-    private fuzzy getOtherDecisionEngine(DTNHost h) {
+    private FuzzyBasedRouting getOtherDecisionEngine(DTNHost h) {
         MessageRouter otherRouter = h.getRouter();
         assert otherRouter instanceof DecisionEngineRouter : "This router only works "
                 + " with other routers of same type";
 
-        return (fuzzy) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+        return (FuzzyBasedRouting) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
 
     @Override
