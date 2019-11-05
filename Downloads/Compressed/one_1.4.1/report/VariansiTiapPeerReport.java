@@ -39,7 +39,7 @@ public class VariansiTiapPeerReport extends Report{
             
             VarianceDecisionEngine cd =(VarianceDecisionEngine)de;
             Map<DTNHost, Double> nodeComm = cd.getVariance();
-            write(h+" ");
+//            write(h+" ");
             write(h+" "+nodeComm);
         }
         super.done();

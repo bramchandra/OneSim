@@ -43,6 +43,7 @@ public class fuzzy implements RoutingDecisionEngine,VarianceDecisionEngine {
 
     public fuzzy(fuzzy t) {
         startTimestamps = new HashMap<DTNHost, Double>();
+        variance = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
     }
     private FIS loadFcl(String loc){
@@ -137,8 +138,8 @@ public class fuzzy implements RoutingDecisionEngine,VarianceDecisionEngine {
 //        fcl.setVariable("closeness", this.getCloseness(dest));
 //        fcl.setVariable("closeness", de.getCloseness(dest));
 //        fcl.evaluate();
-        System.out.println("Peer"+encounterPeer);
-        System.out.println("This"+encounterThis);
+//        System.out.println("Peer"+encounterPeer);
+//        System.out.println("This"+encounterThis);
         return encounterPeer > encounterThis;
     }
 
