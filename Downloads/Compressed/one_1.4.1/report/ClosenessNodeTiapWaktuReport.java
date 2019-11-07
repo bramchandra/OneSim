@@ -21,9 +21,16 @@ import core.Message;
 import core.MessageListener;
 import core.Settings;
 import core.SimClock;
+import core.SimScenario;
 import core.UpdateListener;
+import routing.DecisionEngineRouter;
+import routing.MessageRouter;
+import routing.RoutingDecisionEngine;
+import routing.community.ClosenessDecisionEngine;
+import routing.community.VarianceDecisionEngine;
 
-public class BufferNodeTiapJamReport extends Report implements UpdateListener {
+
+public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListener {
 
     /**
      * Record occupancy every nth second -setting id ({@value}). Defines the
@@ -39,11 +46,11 @@ public class BufferNodeTiapJamReport extends Report implements UpdateListener {
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
 
-    private Map<DTNHost, List<Double>> bufferCounts = new HashMap<DTNHost, List<Double>>();
+    private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
     private int updateCounter = 0;  //new added
     private String print;  //new added
 
-    public BufferNodeTiapJamReport() {
+    public ClosenessNodeTiapWaktuReport() {
         super();
 
         Settings settings = getSettings();
@@ -55,8 +62,8 @@ public class BufferNodeTiapJamReport extends Report implements UpdateListener {
         }
 
         if (interval < 0) {
-        /* not found or invalid value -> use default */
-        interval = DEFAULT_BUFFER_REPORT_INTERVAL;
+            /* not found or invalid value -> use default */
+            interval = DEFAULT_BUFFER_REPORT_INTERVAL;
         }
     }
 
@@ -68,17 +75,32 @@ public class BufferNodeTiapJamReport extends Report implements UpdateListener {
 
         if (SimClock.getTime() - lastRecord >= interval) {
             lastRecord = SimClock.getTime();
+            
             for (DTNHost ho : hosts) {
-                double temp = ho.getBufferOccupancy();
-                temp = (temp <= 100.0) ? (temp) : (100.0);
+                MessageRouter r = ho.getRouter();
+                if (!(r instanceof DecisionEngineRouter)) {
+                    continue;
+                }
+                RoutingDecisionEngine de = ((DecisionEngineRouter) r).getDecisionEngine();
+                if (!(de instanceof ClosenessDecisionEngine)) {
+                    continue;
+                }
+               
+                ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
+                Map<DTNHost, Double> nodeComm = cd.getCloseness();
 
-                if (bufferCounts.containsKey(ho)) {
-                    List bebas = bufferCounts.get(ho);
+                System.out.println("NodeComm=" + nodeComm.get(ho));      
+                
+                Double temp = nodeComm.get(ho);
+
+//                temp = (temp <= 100.0) ? (temp) : (100.0);
+                if (closenessCounts.containsKey(ho)) {
+                    List bebas = closenessCounts.get(ho);
                     bebas.add(temp);
-                    bufferCounts.put(ho, bebas);
+                    closenessCounts.put(ho, bebas);
                 } else {
                     List<Double> bebas = new LinkedList();
-                    bufferCounts.put(ho, bebas);
+                    closenessCounts.put(ho, bebas);
                 }
 
             }
@@ -94,12 +116,13 @@ public class BufferNodeTiapJamReport extends Report implements UpdateListener {
     @Override
     public void done() {
 //        write("Nodes\tPersen Tiap Jam")
-        for (Map.Entry<DTNHost, List<Double>> entry : bufferCounts.entrySet()) {
+        for (Map.Entry<DTNHost, List<Double>> entry : closenessCounts.entrySet()) {
             DTNHost key = entry.getKey();
             List value = entry.getValue();
-            write(key+"\t"+value);
+            write(key + "\t" + value);
 
         }
         super.done();
     }
+
 }

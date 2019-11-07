@@ -3,11 +3,11 @@
 #
 
 ## Scenario settings
-Scenario.name = haggle
+Scenario.name = Haggle
 Scenario.simulateConnections = false
 Scenario.updateInterval = 0.1
 # 43200s == 12h
-Scenario.endTime = 43200
+Scenario.endTime = 274883
 
 
 ## Interface-specific settings:
@@ -54,7 +54,7 @@ Scenario.nrofHostGroups = 1
 # Common settings for all groups
 Group.movementModel = StationaryMovement
 Group.router = DecisionEngineRouter
-DecisionEngineRouter.decisionEngine =test.fuzzy
+DecisionEngineRouter.decisionEngine =test.FuzzyBasedRouting
 Group.bufferSize = 5M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
@@ -114,7 +114,7 @@ Report.warmup = 0
 # default directory of reports (can be overridden per Report with output setting)
 Report.reportDir = reports/
 # Report classes to load
-Report.report1 = VariansiTiapPeerReport
+Report.report1 = BufferNodeTiapJamReport
 
 ## Default settings for some routers settings
 #ProphetRouter.secondsInTimeUnit = 30

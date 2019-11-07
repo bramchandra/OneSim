@@ -14,14 +14,15 @@ import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.Duration;
 //import routing.community.FrequencyDecisionEngine;
-import routing.community.VarianceDecisionEngine;
+//import routing.community.VarianceDecisionEngine;
+import routing.community.ClosenessDecisionEngine;
 
 /**
  *
  * @author jarkom
  */
-public class VariansiTiapPeerReport extends Report{
-    public VariansiTiapPeerReport(){
+public class ClosenessTiapPeerReport extends Report{
+    public ClosenessTiapPeerReport(){
         init();
     }
     public void done(){
@@ -33,12 +34,12 @@ public class VariansiTiapPeerReport extends Report{
                 continue;
             }
             RoutingDecisionEngine de = ((DecisionEngineRouter)r).getDecisionEngine();
-            if(!(de instanceof VarianceDecisionEngine)){
+            if(!(de instanceof ClosenessDecisionEngine)){
                 continue;
             }
             
-            VarianceDecisionEngine cd =(VarianceDecisionEngine)de;
-            Map<DTNHost, Double> nodeComm = cd.getVariance();
+            ClosenessDecisionEngine cd =(ClosenessDecisionEngine)de;
+            Map<DTNHost, Double> nodeComm = cd.getCloseness();
 //            write(h+" ");
             write(h+" "+nodeComm.get(h));
         }
