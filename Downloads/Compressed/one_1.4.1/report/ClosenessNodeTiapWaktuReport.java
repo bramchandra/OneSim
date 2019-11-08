@@ -72,7 +72,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
         if (isWarmup()) {
             return;
         }
-
+        
         if (SimClock.getTime() - lastRecord >= interval) {
             lastRecord = SimClock.getTime();
             
@@ -89,22 +89,16 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                 ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
                 Map<DTNHost, Double> nodeComm = cd.getCloseness();
 
-                
-                Collection<Double> temp = null;
-                for (int i = 0; i < nodeComm.size(); i++) {
-                    temp = nodeComm.values();
-                    
-                }
-                System.out.println("Node="+ho+"Closeness=" + nodeComm.values());      
-//                Double temp = nodeComm.get(ho);
-                
-                
-//                temp = (temp <= 100.0) ? (temp) : (100.0);
+                Map<DTNHost, Double> temp = nodeComm;
+                System.out.println("Node="+ho+"Closeness=" + temp.get(ho));      
+
                 if (closenessCounts.containsKey(ho)) {
+//                    System.out.println("BISA");
                     List bebas = closenessCounts.get(ho);
                     bebas.add(temp);
                     closenessCounts.put(ho, bebas);
                 } else {
+//                    System.out.println("BARU");
                     List<Double> bebas = new LinkedList();
                     closenessCounts.put(ho, bebas);
                 }

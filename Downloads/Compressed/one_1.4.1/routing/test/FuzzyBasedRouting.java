@@ -44,7 +44,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
 
     public FuzzyBasedRouting(FuzzyBasedRouting t) {
         startTimestamps = new HashMap<DTNHost, Double>();
-        closeness = new HashMap<DTNHost, Double>();
+        closeness = new HashMap<DTNHost,  Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
     }
 //    private FIS loadFcl(String loc){
@@ -95,7 +95,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
 
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
-//        DTNHost myHost = con.getOtherNode(peer);
+        
 //        fuzzy de = this.getOtherDecisionEngine(peer);
 
     }
@@ -122,21 +122,26 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
 
     @Override
     public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
+        
+       
         return m.getTo() != thisHost;
     }
+//    public DTNHost getPeer(DTNHost hosts){
+//        
+//    }
 
     @Override
     public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
         if (m.getTo() == otherHost) {
             return true;
         }
-          
+        
+         
         DTNHost dest = m.getTo();
         FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
         encounterThis=this.getClosenessOfNodes(dest);
-        encounterPeer=de.getClosenessOfNodes(dest);
-        
-        closeness.put(otherHost, de.getClosenessOfNodes(dest));
+        encounterPeer=de.getClosenessOfNodes(dest);               
+        closeness.put(dest, this.getClosenessOfNodes(dest));
         
 //        System.out.println(closeness);
 //        fcl.setVariable("closeness", this.getCloseness(dest));
@@ -214,7 +219,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
 
     @Override
     public Map<DTNHost, Double> getCloseness() {
-        return this.closeness;
+        return closeness;
     }
 
 
