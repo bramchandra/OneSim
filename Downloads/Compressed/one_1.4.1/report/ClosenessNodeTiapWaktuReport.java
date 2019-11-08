@@ -41,7 +41,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
     /**
      * Default value for the snapshot interval
      */
-    public static final int DEFAULT_BUFFER_REPORT_INTERVAL = 3600;
+    public static final int DEFAULT_BUFFER_REPORT_INTERVAL = 500;
 
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
@@ -89,10 +89,16 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                 ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
                 Map<DTNHost, Double> nodeComm = cd.getCloseness();
 
-                System.out.println("NodeComm=" + nodeComm.get(ho));      
                 
-                Double temp = nodeComm.get(ho);
-
+                Collection<Double> temp = null;
+                for (int i = 0; i < nodeComm.size(); i++) {
+                    temp = nodeComm.values();
+                    
+                }
+                System.out.println("Node="+ho+"Closeness=" + nodeComm.values());      
+//                Double temp = nodeComm.get(ho);
+                
+                
 //                temp = (temp <= 100.0) ? (temp) : (100.0);
                 if (closenessCounts.containsKey(ho)) {
                     List bebas = closenessCounts.get(ho);

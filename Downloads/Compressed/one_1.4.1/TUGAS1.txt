@@ -7,7 +7,8 @@ Scenario.name = Haggle
 Scenario.simulateConnections = false
 Scenario.updateInterval = 0.1
 # 43200s == 12h
-Scenario.endTime = 274883
+Scenario.endTime = 43200
+# 274883
 
 
 ## Interface-specific settings:
@@ -114,7 +115,7 @@ Report.warmup = 0
 # default directory of reports (can be overridden per Report with output setting)
 Report.reportDir = reports/
 # Report classes to load
-Report.report1 = BufferNodeTiapJamReport
+Report.report1 = ClosenessNodeTiapWaktuReport
 
 ## Default settings for some routers settings
 #ProphetRouter.secondsInTimeUnit = 30
