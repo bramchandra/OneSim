@@ -141,7 +141,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
         encounterThis=this.getClosenessOfNodes(dest);
         encounterPeer=de.getClosenessOfNodes(dest);               
-        closeness.put(dest, this.getClosenessOfNodes(dest));
+        closeness.put(dest, de.getClosenessOfNodes(dest));
         
 //        System.out.println(closeness);
 //        fcl.setVariable("closeness", this.getCloseness(dest));

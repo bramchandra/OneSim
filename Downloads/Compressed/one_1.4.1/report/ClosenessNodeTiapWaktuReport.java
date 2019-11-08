@@ -90,7 +90,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                 Map<DTNHost, Double> nodeComm = cd.getCloseness();
 
                 Map<DTNHost, Double> temp = nodeComm;
-                System.out.println("Node="+ho+"Closeness=" + temp.get(ho));      
+                System.out.println("Node="+ho+"Closeness=" + temp);      
 
                 if (closenessCounts.containsKey(ho)) {
 //                    System.out.println("BISA");
