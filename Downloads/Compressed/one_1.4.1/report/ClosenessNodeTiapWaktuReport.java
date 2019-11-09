@@ -29,7 +29,6 @@ import routing.RoutingDecisionEngine;
 import routing.community.ClosenessDecisionEngine;
 import routing.community.VarianceDecisionEngine;
 
-
 public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListener {
 
     /**
@@ -41,12 +40,10 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
     /**
      * Default value for the snapshot interval
      */
-    public static final int DEFAULT_BUFFER_REPORT_INTERVAL = 500;
-
+    public static final int DEFAULT_BUFFER_REPORT_INTERVAL = 10000;
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
-
-    private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
+    private Map<DTNHost, Map<DTNHost, Double>> closenessCounts = new HashMap<DTNHost, Map<DTNHost, Double>>();
     private int updateCounter = 0;  //new added
     private String print;  //new added
 
@@ -54,6 +51,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
         super();
 
         Settings settings = getSettings();
+
         if (settings.contains(BUFFER_REPORT_INTERVAL)) {
             interval = settings.getInt(BUFFER_REPORT_INTERVAL);
         } else {
@@ -67,15 +65,15 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
         }
     }
 
+    @Override
     public void updated(List<DTNHost> hosts) {
-
+        double simTime = getSimTime();
         if (isWarmup()) {
             return;
         }
-        
-        if (SimClock.getTime() - lastRecord >= interval) {
-            lastRecord = SimClock.getTime();
-            
+
+        if (simTime - lastRecord >= interval) {
+
             for (DTNHost ho : hosts) {
                 MessageRouter r = ho.getRouter();
                 if (!(r instanceof DecisionEngineRouter)) {
@@ -85,26 +83,25 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                 if (!(de instanceof ClosenessDecisionEngine)) {
                     continue;
                 }
-               
+
                 ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
-                Map<DTNHost, Double> nodeComm = cd.getCloseness();
-
-                Map<DTNHost, Double> temp = nodeComm;
-                System.out.println("Node="+ho+"Closeness=" + temp);      
-
-                if (closenessCounts.containsKey(ho)) {
-//                    System.out.println("BISA");
-                    List bebas = closenessCounts.get(ho);
-                    bebas.add(temp);
-                    closenessCounts.put(ho, bebas);
-                } else {
-//                    System.out.println("BARU");
-                    List<Double> bebas = new LinkedList();
-                    closenessCounts.put(ho, bebas);
-                }
+                System.out.println(ho.getAddress() +" "+cd.getCloseness());
+                closenessCounts.put(ho, cd.getCloseness());
 
             }
-
+            write("Closeness per time : " +lastRecord);
+            for (Map.Entry<DTNHost, Map<DTNHost, Double>> entry : closenessCounts.entrySet()) {
+                DTNHost key = entry.getKey();
+                write("Closeness to Node Id : " +key.getAddress());
+                for (Map.Entry<DTNHost , Double> entry1 : entry.getValue().entrySet()) {
+                    DTNHost key1 = entry1.getKey();
+                    double value1 = entry1.getValue();
+                    write(key1+" "+value1);
+                }
+//                String value = entry.getValue().toString();
+                
+            }
+            this.lastRecord = simTime - simTime % interval;
         }
     }
 
@@ -116,12 +113,15 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
     @Override
     public void done() {
 //        write("Nodes\tPersen Tiap Jam")
-        for (Map.Entry<DTNHost, List<Double>> entry : closenessCounts.entrySet()) {
-            DTNHost key = entry.getKey();
-            List value = entry.getValue();
-            write(key + "\t" + value);
-
-        }
+//        List<DTNHost> host = SimScenario.getInstance().getHosts();
+//        for (DTNHost node : host) {
+//            
+//            for (Map.Entry<DTNHost, Double> entry : closenessCounts.entrySet()) {
+//                DTNHost key = entry.getKey();
+//                Double value = entry.getValue();
+//                write(key+" "+' '+value);
+//            }
+//        }
         super.done();
     }
 

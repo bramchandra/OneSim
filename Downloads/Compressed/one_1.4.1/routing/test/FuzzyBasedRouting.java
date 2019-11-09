@@ -141,13 +141,12 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
         encounterThis=this.getClosenessOfNodes(dest);
         encounterPeer=de.getClosenessOfNodes(dest);               
-        closeness.put(dest, de.getClosenessOfNodes(dest));
         
 //        System.out.println(closeness);
 //        fcl.setVariable("closeness", this.getCloseness(dest));
 //        fcl.setVariable("closeness", de.getCloseness(dest));
 //        fcl.evaluate();
-//        System.out.println("Peer"+encounterPeer);
+//        System.out.println("My : "+encounterThis+ " , peer : " +encounterPeer);
 //        System.out.println("This"+encounterThis);
         return encounterPeer > encounterThis;
     }
@@ -179,8 +178,9 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
     private double getClosenessOfNodes(DTNHost nodes) {
         double rataShortestSeparation = getAverageShortestSeparationOfNodes(nodes);
         double variansi = getVarianceOfNodes(nodes);
-
-        return Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / (2 * variansi));
+        double closenessValue = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / (2 * variansi));
+        this.closeness.put(nodes, closenessValue);
+        return closenessValue;
     }
 
     public double getAverageShortestSeparationOfNodes(DTNHost nodes) {

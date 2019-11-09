@@ -7,7 +7,7 @@ Scenario.name = Haggle
 Scenario.simulateConnections = false
 Scenario.updateInterval = 0.1
 # 43200s == 12h
-Scenario.endTime = 43200
+Scenario.endTime = 274883
 # 274883
 
 
@@ -55,7 +55,7 @@ Scenario.nrofHostGroups = 1
 # Common settings for all groups
 Group.movementModel = StationaryMovement
 Group.router = DecisionEngineRouter
-DecisionEngineRouter.decisionEngine =test.FuzzyBasedRouting
+DecisionEngineRouter.decisionEngine = test.FuzzyBasedRouting
 Group.bufferSize = 5M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
@@ -116,6 +116,7 @@ Report.warmup = 0
 Report.reportDir = reports/
 # Report classes to load
 Report.report1 = ClosenessNodeTiapWaktuReport
+Report.closenessToNodeID = [0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40]
 
 ## Default settings for some routers settings
 #ProphetRouter.secondsInTimeUnit = 30
