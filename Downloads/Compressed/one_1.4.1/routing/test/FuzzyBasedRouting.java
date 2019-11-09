@@ -33,8 +33,9 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, Double> ratarata;
     protected Map<DTNHost, List<Duration>> connHistory;
-    protected Map<DTNHost, Double> closeness;
-
+    protected Map<DTNHost, List<Double>> closeness;
+    protected List<Double> closenessTotal;
+    
     double encounterPeer;
     double encounterThis;
 
@@ -44,8 +45,9 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
 
     public FuzzyBasedRouting(FuzzyBasedRouting t) {
         startTimestamps = new HashMap<DTNHost, Double>();
-        closeness = new HashMap<DTNHost,  Double>();
+        closeness = new HashMap<DTNHost,  List<Double>>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
+        closenessTotal = new LinkedList<Double>();
     }
 //    private FIS loadFcl(String loc){
 //        String fileName = "fcl/tipper.fcl";
@@ -179,7 +181,8 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         double rataShortestSeparation = getAverageShortestSeparationOfNodes(nodes);
         double variansi = getVarianceOfNodes(nodes);
         double closenessValue = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / (2 * variansi));
-        this.closeness.put(nodes, closenessValue);
+        closenessTotal.add(closenessValue);
+        this.closeness.put(nodes, closenessTotal);
         return closenessValue;
     }
 
@@ -218,7 +221,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
     }
 
     @Override
-    public Map<DTNHost, Double> getCloseness() {
+    public Map<DTNHost, List<Double>> getCloseness() {
         return closeness;
     }
 

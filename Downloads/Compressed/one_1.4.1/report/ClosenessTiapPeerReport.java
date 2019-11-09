@@ -39,9 +39,9 @@ public class ClosenessTiapPeerReport extends Report{
             }
             
             ClosenessDecisionEngine cd =(ClosenessDecisionEngine)de;
-            Map<DTNHost, Double> nodeComm = cd.getCloseness();
+//            Map<DTNHost, Double> nodeComm = cd.getCloseness();
 //            write(h+" ");
-            write(h+" "+nodeComm.get(h));
+//            write(h+" "+nodeComm.get(h));
         }
         super.done();
     }
