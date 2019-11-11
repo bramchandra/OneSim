@@ -23,19 +23,17 @@ import net.sourceforge.jFuzzyLogic.FIS;
 import routing.community.ClosenessDecisionEngine;
 //import routing.community.VarianceDecisionEngine;
 
-
 /**
  *
  * @author jarkom
  */
-public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisionEngine {
+public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, Double> ratarata;
     protected Map<DTNHost, List<Duration>> connHistory;
     protected Map<DTNHost, List<Double>> closeness;
-    protected List<Double> closenessTotal;
-    
+
     double encounterPeer;
     double encounterThis;
 
@@ -45,9 +43,9 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
 
     public FuzzyBasedRouting(FuzzyBasedRouting t) {
         startTimestamps = new HashMap<DTNHost, Double>();
-        closeness = new HashMap<DTNHost,  List<Double>>();
+        closeness = new HashMap<DTNHost, List<Double>>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
-        closenessTotal = new LinkedList<Double>();
+
     }
 //    private FIS loadFcl(String loc){
 //        String fileName = "fcl/tipper.fcl";
@@ -93,13 +91,11 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         FuzzyBasedRouting de = this.getOtherDecisionEngine(peer);
         startTimestamps.put(peer, SimClock.getTime());
     }
-    
 
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
-        
-//        fuzzy de = this.getOtherDecisionEngine(peer);
 
+//        fuzzy de = this.getOtherDecisionEngine(peer);
     }
 
     @Override
@@ -124,8 +120,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
 
     @Override
     public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
-        
-       
+
         return m.getTo() != thisHost;
     }
 //    public DTNHost getPeer(DTNHost hosts){
@@ -137,13 +132,12 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         if (m.getTo() == otherHost) {
             return true;
         }
-        
-         
+
         DTNHost dest = m.getTo();
         FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
-        encounterThis=this.getClosenessOfNodes(dest);
-        encounterPeer=de.getClosenessOfNodes(dest);               
-        
+        encounterThis = this.getClosenessOfNodes(dest);
+        encounterPeer = de.getClosenessOfNodes(dest);
+
 //        System.out.println(closeness);
 //        fcl.setVariable("closeness", this.getCloseness(dest));
 //        fcl.setVariable("closeness", de.getCloseness(dest));
@@ -153,7 +147,6 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         return encounterPeer > encounterThis;
     }
 
-
     public double getVarianceOfNodes(DTNHost nodes) {
         List<Duration> list = getList(nodes);
         Iterator<Duration> duration = list.iterator();
@@ -161,7 +154,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         double mean = getAverageShortestSeparationOfNodes(nodes);
         while (duration.hasNext()) {
             Duration d = duration.next();
-            temp += ((d.end-d.start) - mean) * ((d.end-d.start) - mean);
+            temp += ((d.end - d.start) - mean) * ((d.end - d.start) - mean);
         }
 
         return temp / list.size();
@@ -173,7 +166,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         } else {
             List<Duration> d = new LinkedList<>();
             return d;
-            
+
         }
     }
 
@@ -181,8 +174,9 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
         double rataShortestSeparation = getAverageShortestSeparationOfNodes(nodes);
         double variansi = getVarianceOfNodes(nodes);
         double closenessValue = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / (2 * variansi));
-        closenessTotal.add(closenessValue);
-        this.closeness.put(nodes, closenessTotal);
+        List<Double> closenessList = new LinkedList<>();
+        closenessList.add(closenessValue);
+        closeness.put(nodes, closenessList);
         return closenessValue;
     }
 
@@ -224,8 +218,5 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine,ClosenessDecisio
     public Map<DTNHost, List<Double>> getCloseness() {
         return closeness;
     }
-
-
-
 
 }

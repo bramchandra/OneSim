@@ -1,6 +1,6 @@
-/* 
- * 
- * 
+/*
+ *
+ *
  */
 package report;
 
@@ -44,6 +44,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
     private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
+    private Map<DTNHost, List<Double>> perWaktu = new HashMap<DTNHost, List<Double>>();
     private int updateCounter = 0;  //new added
     private String print;  //new added
 
@@ -84,8 +85,29 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                     continue;
                 }
                 ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
-                closenessCounts.putAll(cd.getCloseness());
+                closenessCounts = cd.getCloseness();
 
+            }
+//            write("TimePer" + lastRecord);
+            for (Map.Entry<DTNHost, List<Double>> entry : closenessCounts.entrySet()) {
+                DTNHost key = entry.getKey();
+                List<Double> value = entry.getValue();
+                double temp = 0;
+                for (Double double1 : value) {
+                    temp += double1;
+                }
+                List<Double> hasil;
+                if (!perWaktu.containsKey(key)) {
+                    hasil = new LinkedList<Double>();
+
+                } else {
+                    hasil = perWaktu.get(key);
+
+                }
+
+                hasil.add(temp / value.size());
+                perWaktu.put(key, hasil);
+//                write(key + " " + temp / value.size());
             }
             
             this.lastRecord = simTime - simTime % interval;
@@ -99,14 +121,16 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
      */
     @Override
     public void done() {
-        for (Map.Entry<DTNHost, List<Double>> entry : closenessCounts.entrySet()) {
+        int time = interval;
+//        write("" + time);
+        for (Map.Entry<DTNHost, List<Double>> entry : perWaktu.entrySet()) {
             DTNHost key = entry.getKey();
-            String PrintHost = "Node " + key.getAddress();
-            for (Double listValue : entry.getValue()) {
-                PrintHost = PrintHost + "\t" + listValue;
-            }
-            write(PrintHost);
+            List<Double> value = entry.getValue();
+            
+//            write(key + " " + value);
+
         }
+//        time += interval;
         super.done();
     }
 
