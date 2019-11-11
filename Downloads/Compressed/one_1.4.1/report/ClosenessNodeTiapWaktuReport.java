@@ -127,7 +127,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
             DTNHost key = entry.getKey();
             List<Double> value = entry.getValue();
             
-//            write(key + " " + value);
+            write(key + " " + value);
 
         }
 //        time += interval;
