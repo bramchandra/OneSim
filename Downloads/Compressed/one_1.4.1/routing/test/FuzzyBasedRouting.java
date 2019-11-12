@@ -159,6 +159,11 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
 
         return temp / list.size();
     }
+    public double getNormalizedVarianceOfNodes(DTNHost nodes) {
+        Double variansi = getVarianceOfNodes(nodes);
+        
+    }
+    
 
     public List<Duration> getList(DTNHost nodes) {
         if (connHistory.containsKey(nodes)) {
@@ -180,6 +185,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
         return closenessValue;
     }
 
+    
     public double getAverageShortestSeparationOfNodes(DTNHost nodes) {
         List<Duration> list = getList(nodes);
         Iterator<Duration> duration = list.iterator();

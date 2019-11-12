@@ -43,7 +43,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
     public static final int DEFAULT_BUFFER_REPORT_INTERVAL = 10000;
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
-    private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
+//    private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
     private Map<DTNHost, List<Double>> perWaktu = new HashMap<DTNHost, List<Double>>();
     private int updateCounter = 0;  //new added
     private String print;  //new added
@@ -74,7 +74,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
         }
 
         if (simTime - lastRecord >= interval) {
-
+            Map<DTNHost, List<Double>> nodeComm = null;
             for (DTNHost ho : hosts) {
                 MessageRouter r = ho.getRouter();
                 if (!(r instanceof DecisionEngineRouter)) {
@@ -85,11 +85,11 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                     continue;
                 }
                 ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
-                closenessCounts = cd.getCloseness();
+                nodeComm = cd.getCloseness();
 
             }
 //            write("TimePer" + lastRecord);
-            for (Map.Entry<DTNHost, List<Double>> entry : closenessCounts.entrySet()) {
+            for (Map.Entry<DTNHost, List<Double>> entry : nodeComm.entrySet()) {
                 DTNHost key = entry.getKey();
                 List<Double> value = entry.getValue();
                 double temp = 0;
@@ -109,7 +109,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                 perWaktu.put(key, hasil);
 //                write(key + " " + temp / value.size());
             }
-            
+
             this.lastRecord = simTime - simTime % interval;
         }
     }
@@ -126,7 +126,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
         for (Map.Entry<DTNHost, List<Double>> entry : perWaktu.entrySet()) {
             DTNHost key = entry.getKey();
             List<Double> value = entry.getValue();
-            
+
             write(key + " " + value);
 
         }

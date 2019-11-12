@@ -3,7 +3,7 @@
 #
 
 ## Scenario settings
-Scenario.name = HaggleCloseness
+Scenario.name = HaggleCloseness1
 Scenario.simulateConnections = false
 Scenario.updateInterval = 0.1
 # 43200s == 12h
