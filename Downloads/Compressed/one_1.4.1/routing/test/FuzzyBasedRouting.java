@@ -27,7 +27,7 @@ import routing.community.VarianceDecisionEngine;
  *
  * @author jarkom
  */
-public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisionEngine,VarianceDecisionEngine {
+public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisionEngine, VarianceDecisionEngine {
 
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, Double> ratarata;
@@ -138,7 +138,9 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
         FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
         encounterThis = this.getClosenessOfNodes(dest);
         encounterPeer = de.getClosenessOfNodes(dest);
-
+        double mean = getAverageShortestSeparationOfNodes(dest);
+        double sdv = getVarianceOfNodes(dest);
+        System.out.println(getIndexOfDispertion(dest));
 //        System.out.println(closeness);
 //        fcl.setVariable("closeness", this.getCloseness(dest));
 //        fcl.setVariable("closeness", de.getCloseness(dest));
@@ -152,16 +154,36 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
         List<Duration> list = getList(nodes);
         Iterator<Duration> duration = list.iterator();
         double temp = 0;
+
         double mean = getAverageShortestSeparationOfNodes(nodes);
         while (duration.hasNext()) {
             Duration d = duration.next();
             temp += ((d.end - d.start) - mean) * ((d.end - d.start) - mean);
         }
-
-        return temp / list.size();
+        double hasil = temp / list.size();
+        return hasil;
     }
-    
-    
+
+    public double getIndexOfDispertion(DTNHost nodes) {
+        double k = 41;
+        List<Duration> list = getList(nodes);
+        Iterator<Duration> duration = list.iterator();
+        double temp = 0;
+        double N = 0;
+        double f=0;
+        while (duration.hasNext()) {
+            Duration d = duration.next();
+            N += (d.end - d.start);
+            f += Math.pow((d.end - d.start),2);
+        }
+        double d=k*(Math.pow(N, 2)-f)/((Math.pow(N, 2)*(k-1)));
+        List<Double> varianceList = new LinkedList<>();
+        varianceList.add(d);
+        varianceMap.put(nodes, varianceList);
+       return d;
+       
+
+    }
 
     public List<Duration> getList(DTNHost nodes) {
         if (connHistory.containsKey(nodes)) {
@@ -183,7 +205,6 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
         return closenessValue;
     }
 
-    
     public double getAverageShortestSeparationOfNodes(DTNHost nodes) {
         List<Duration> list = getList(nodes);
         Iterator<Duration> duration = list.iterator();
@@ -224,8 +245,8 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
     }
 
     @Override
-    public Map<DTNHost, Double> getVariance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Map<DTNHost, List<Double>> getVariance() {
+        return varianceMap;
     }
 
 }

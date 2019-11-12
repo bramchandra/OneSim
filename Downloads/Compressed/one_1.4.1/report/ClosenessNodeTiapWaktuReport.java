@@ -44,7 +44,8 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
 //    private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
-    private Map<DTNHost, List<Double>> perWaktu = new HashMap<DTNHost, List<Double>>();
+    private Map<DTNHost, List<Double>> closenessPerWaktu = new HashMap<DTNHost, List<Double>>();
+    private Map<DTNHost, List<Double>> variancePerWaktu = new HashMap<DTNHost, List<Double>>();
     private int updateCounter = 0;  //new added
     private String print;  //new added
 
@@ -74,22 +75,25 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
         }
 
         if (simTime - lastRecord >= interval) {
-            Map<DTNHost, List<Double>> nodeComm = null;
+            Map<DTNHost, List<Double>> closenessMap = null;
+            Map<DTNHost, List<Double>> varianceMap = null;
             for (DTNHost ho : hosts) {
                 MessageRouter r = ho.getRouter();
                 if (!(r instanceof DecisionEngineRouter)) {
                     continue;
                 }
                 RoutingDecisionEngine de = ((DecisionEngineRouter) r).getDecisionEngine();
-                if (!(de instanceof ClosenessDecisionEngine)) {
-                    continue;
+                if ((de instanceof ClosenessDecisionEngine)) {
+                    ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
+                    closenessMap = cd.getCloseness();
                 }
-                ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
-                nodeComm = cd.getCloseness();
+                if (de instanceof VarianceDecisionEngine) {
+                    VarianceDecisionEngine vd = (VarianceDecisionEngine) de;
+                    varianceMap = vd.getVariance();
+                }
 
             }
-//            write("TimePer" + lastRecord);
-            for (Map.Entry<DTNHost, List<Double>> entry : nodeComm.entrySet()) {
+            for (Map.Entry<DTNHost, List<Double>> entry : varianceMap.entrySet()) {
                 DTNHost key = entry.getKey();
                 List<Double> value = entry.getValue();
                 double temp = 0;
@@ -97,16 +101,35 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                     temp += double1;
                 }
                 List<Double> hasil;
-                if (!perWaktu.containsKey(key)) {
+                if (!closenessPerWaktu.containsKey(key)) {
                     hasil = new LinkedList<Double>();
 
                 } else {
-                    hasil = perWaktu.get(key);
+                    hasil = closenessPerWaktu.get(key);
 
                 }
 
                 hasil.add(temp / value.size());
-                perWaktu.put(key, hasil);
+                closenessPerWaktu.put(key, hasil);
+            }
+            for (Map.Entry<DTNHost, List<Double>> entry : closenessMap.entrySet()) {
+                DTNHost key = entry.getKey();
+                List<Double> value = entry.getValue();
+                double temp = 0;
+                for (Double double1 : value) {
+                    temp += double1;
+                }
+                List<Double> hasil;
+                if (!variancePerWaktu.containsKey(key)) {
+                    hasil = new LinkedList<Double>();
+
+                } else {
+                    hasil = variancePerWaktu.get(key);
+
+                }
+
+                hasil.add(temp / value.size());
+                variancePerWaktu.put(key, hasil);
 //                write(key + " " + temp / value.size());
             }
 
@@ -121,16 +144,14 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
      */
     @Override
     public void done() {
-        int time = interval;
-//        write("" + time);
-        for (Map.Entry<DTNHost, List<Double>> entry : perWaktu.entrySet()) {
+        for (Map.Entry<DTNHost, List<Double>> entry : variancePerWaktu.entrySet()) {
             DTNHost key = entry.getKey();
             List<Double> value = entry.getValue();
 
             write(key + " " + value);
 
         }
-//        time += interval;
+
         super.done();
     }
 
