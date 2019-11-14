@@ -27,7 +27,7 @@ import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.ClosenessDecisionEngine;
-import routing.community.VarianceDecisionEngine;
+
 
 public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListener {
 
@@ -75,8 +75,8 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
         }
 
         if (simTime - lastRecord >= interval) {
-            Map<DTNHost, List<Double>> closenessMap = null;
-            Map<DTNHost, List<Double>> varianceMap = null;
+            Map<DTNHost, List<Double>> closenessMap = new HashMap<DTNHost, List<Double>>();
+            
             for (DTNHost ho : hosts) {
                 MessageRouter r = ho.getRouter();
                 if (!(r instanceof DecisionEngineRouter)) {
@@ -84,16 +84,15 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                 }
                 RoutingDecisionEngine de = ((DecisionEngineRouter) r).getDecisionEngine();
                 if ((de instanceof ClosenessDecisionEngine)) {
-                    ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
-                    closenessMap = cd.getCloseness();
+                    continue;
                 }
-                if (de instanceof VarianceDecisionEngine) {
-                    VarianceDecisionEngine vd = (VarianceDecisionEngine) de;
-                    varianceMap = vd.getVariance();
-                }
+              
+                ClosenessDecisionEngine vd = (ClosenessDecisionEngine) de;
+                closenessMap = vd.getCloseness();
 
             }
-            for (Map.Entry<DTNHost, List<Double>> entry : varianceMap.entrySet()) {
+            
+            for (Map.Entry<DTNHost, List<Double>> entry : closenessMap.entrySet()) {
                 DTNHost key = entry.getKey();
                 List<Double> value = entry.getValue();
                 double temp = 0;
@@ -111,26 +110,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
 
                 hasil.add(temp / value.size());
                 closenessPerWaktu.put(key, hasil);
-            }
-            for (Map.Entry<DTNHost, List<Double>> entry : closenessMap.entrySet()) {
-                DTNHost key = entry.getKey();
-                List<Double> value = entry.getValue();
-                double temp = 0;
-                for (Double double1 : value) {
-                    temp += double1;
-                }
-                List<Double> hasil;
-                if (!variancePerWaktu.containsKey(key)) {
-                    hasil = new LinkedList<Double>();
-
-                } else {
-                    hasil = variancePerWaktu.get(key);
-
-                }
-
-                hasil.add(temp / value.size());
-                variancePerWaktu.put(key, hasil);
-//                write(key + " " + temp / value.size());
+                write(key + " " + temp / value.size());
             }
 
             this.lastRecord = simTime - simTime % interval;
@@ -144,7 +124,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
      */
     @Override
     public void done() {
-        for (Map.Entry<DTNHost, List<Double>> entry : variancePerWaktu.entrySet()) {
+        for (Map.Entry<DTNHost, List<Double>> entry : closenessPerWaktu.entrySet()) {
             DTNHost key = entry.getKey();
             List<Double> value = entry.getValue();
 

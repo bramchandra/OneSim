@@ -45,6 +45,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
     public FuzzyBasedRouting(FuzzyBasedRouting t) {
         startTimestamps = new HashMap<DTNHost, Double>();
         closenessMap = new HashMap<DTNHost, List<Double>>();
+        varianceMap = new HashMap<DTNHost, List<Double>>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
 
     }
@@ -136,11 +137,9 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
 
         DTNHost dest = m.getTo();
         FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
-        encounterThis = this.getClosenessOfNodes(dest);
-        encounterPeer = de.getClosenessOfNodes(dest);
-        double mean = getAverageShortestSeparationOfNodes(dest);
-        double sdv = getVarianceOfNodes(dest);
-        System.out.println(getIndexOfDispertion(dest));
+        encounterThis = this.getIndexOfDispertion(dest);
+        encounterPeer = de.getIndexOfDispertion(dest);
+       
 //        System.out.println(closeness);
 //        fcl.setVariable("closeness", this.getCloseness(dest));
 //        fcl.setVariable("closeness", de.getCloseness(dest));
@@ -165,23 +164,22 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
     }
 
     public double getIndexOfDispertion(DTNHost nodes) {
-        double k = 41;
+        double k = getList(nodes).size();
         List<Duration> list = getList(nodes);
         Iterator<Duration> duration = list.iterator();
         double temp = 0;
         double N = 0;
-        double f=0;
+        double f = 0;
         while (duration.hasNext()) {
             Duration d = duration.next();
             N += (d.end - d.start);
-            f += Math.pow((d.end - d.start),2);
+            f += Math.pow((d.end - d.start), 2);
         }
-        double d=k*(Math.pow(N, 2)-f)/((Math.pow(N, 2)*(k-1)));
-        List<Double> varianceList = new LinkedList<>();
+        double d = k * (Math.pow(N, 2) - f) / ((Math.pow(N, 2) * (k - 1)));
+        List<Double> varianceList = new LinkedList<Double>();
         varianceList.add(d);
         varianceMap.put(nodes, varianceList);
-       return d;
-       
+        return d;
 
     }
 
