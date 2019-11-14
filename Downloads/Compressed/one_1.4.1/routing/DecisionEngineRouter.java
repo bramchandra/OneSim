@@ -85,7 +85,6 @@ public class DecisionEngineRouter extends ActiveRouter {
     public static final String ENGINE_SETTING = "decisionEngine";
     public static final String TOMBSTONE_SETTING = "tombstones";
     public static final String CONNECTION_STATE_SETTING = "";
-    
 
     protected boolean tombstoning;
     protected RoutingDecisionEngine decider;
@@ -306,7 +305,7 @@ public class DecisionEngineRouter extends ActiveRouter {
         }
 
         retVal = con.startTransfer(getHost(), m);
-        
+
         if (retVal == RCV_OK) { // started transfer
             addToSendingConnections(con);
         } else if (tombstoning && retVal == DENIED_DELIVERED) {
@@ -427,16 +426,18 @@ public class DecisionEngineRouter extends ActiveRouter {
     @Override
     public void update() {
         super.update();
+
         if (!canStartTransfer() || isTransferring()) {
             return; // nothing to transfer or is currently transferring
         }
-
+        
         tryMessagesForConnected(outgoingMessages);
 
         for (Iterator<Tuple<Message, Connection>> i = outgoingMessages.iterator();
                 i.hasNext();) {
-            Tuple<Message, Connection> t = i.next();
+            Tuple<Message, Connection> t = i.next();            
             if (!this.hasMessage(t.getKey().getId())) {
+                
                 i.remove();
             }
         }

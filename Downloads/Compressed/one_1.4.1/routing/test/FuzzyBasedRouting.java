@@ -33,7 +33,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
     protected Map<DTNHost, Double> ratarata;
     protected Map<DTNHost, List<Duration>> connHistory;
     protected Map<DTNHost, List<Double>> closenessMap;
-    protected Map<DTNHost, List<Double>> varianceMap;
+    protected Map<DTNHost, List<Double>> varianceData;
 
     double encounterPeer;
     double encounterThis;
@@ -45,7 +45,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
     public FuzzyBasedRouting(FuzzyBasedRouting t) {
         startTimestamps = new HashMap<DTNHost, Double>();
         closenessMap = new HashMap<DTNHost, List<Double>>();
-        varianceMap = new HashMap<DTNHost, List<Double>>();
+        varianceData = new HashMap<DTNHost, List<Double>>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
 
     }
@@ -139,7 +139,15 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
         FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
         encounterThis = this.getIndexOfDispertion(dest);
         encounterPeer = de.getIndexOfDispertion(dest);
-       
+        List<Double> varianceList;
+
+        if (!varianceData.containsKey(dest)) {
+            varianceList = new LinkedList<Double>();
+        } else {
+            varianceList=varianceData.get(dest);
+        }
+        varianceList.add(getIndexOfDispertion(dest));
+        varianceData.put(dest, varianceList);
 //        System.out.println(closeness);
 //        fcl.setVariable("closeness", this.getCloseness(dest));
 //        fcl.setVariable("closeness", de.getCloseness(dest));
@@ -176,9 +184,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
             f += Math.pow((d.end - d.start), 2);
         }
         double d = k * (Math.pow(N, 2) - f) / ((Math.pow(N, 2) * (k - 1)));
-        List<Double> varianceList = new LinkedList<Double>();
-        varianceList.add(d);
-        varianceMap.put(nodes, varianceList);
+
         return d;
 
     }
@@ -244,7 +250,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
 
     @Override
     public Map<DTNHost, List<Double>> getVariance() {
-        return varianceMap;
+        return varianceData;
     }
 
 }

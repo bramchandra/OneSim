@@ -43,8 +43,6 @@ public class VarianceNodeTiapWaktuReport extends Report implements UpdateListene
     public static final int DEFAULT_BUFFER_REPORT_INTERVAL = 10000;
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
-//    private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
-    private Map<DTNHost, List<Double>> closenessPerWaktu = new HashMap<DTNHost, List<Double>>();
     private Map<DTNHost, List<Double>> variancePerWaktu = new HashMap<DTNHost, List<Double>>();
     private int updateCounter = 0;  //new added
     private String print;  //new added
@@ -83,16 +81,15 @@ public class VarianceNodeTiapWaktuReport extends Report implements UpdateListene
                     continue;
                 }
                 RoutingDecisionEngine de = ((DecisionEngineRouter) r).getDecisionEngine();
-//                if ((de instanceof ClosenessDecisionEngine)) {
-//                    ClosenessDecisionEngine cd = (ClosenessDecisionEngine) de;
-//                    closenessMap = cd.getCloseness();
-//                }
-                if (de instanceof VarianceDecisionEngine) {
+                if (!(de instanceof VarianceDecisionEngine)) {
                     continue;
                 }
                 VarianceDecisionEngine vd = (VarianceDecisionEngine) de;
                 varianceMap = vd.getVariance();
-
+                if(ho.getAddress()==0){
+                    
+                }
+             
             }
             for (Map.Entry<DTNHost, List<Double>> entry : varianceMap.entrySet()) {
                 DTNHost key = entry.getKey();
@@ -109,7 +106,6 @@ public class VarianceNodeTiapWaktuReport extends Report implements UpdateListene
                     hasil = variancePerWaktu.get(key);
 
                 }
-
                 hasil.add(temp / value.size());
                 variancePerWaktu.put(key, hasil);
             }
