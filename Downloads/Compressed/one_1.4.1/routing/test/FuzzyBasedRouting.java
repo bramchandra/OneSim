@@ -140,12 +140,12 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
         encounterThis = this.getIndexOfDispertion(dest);
         encounterPeer = de.getIndexOfDispertion(dest);
         List<Double> varianceList;
-
         if (!varianceData.containsKey(dest)) {
             varianceList = new LinkedList<Double>();
         } else {
             varianceList=varianceData.get(dest);
         }
+        
         varianceList.add(getIndexOfDispertion(dest));
         varianceData.put(dest, varianceList);
 //        System.out.println(closeness);
@@ -182,9 +182,12 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
             Duration d = duration.next();
             N += (d.end - d.start);
             f += Math.pow((d.end - d.start), 2);
+        }        
+        Double d = k * (Math.pow(N, 2) - f) / ((Math.pow(N, 2) * (k - 1)));      
+        if(d.isNaN()){
+            d=0.0;
         }
-        double d = k * (Math.pow(N, 2) - f) / ((Math.pow(N, 2) * (k - 1)));
-
+//        System.out.println("Nodes  = "+nodes.getAddress()+" IOD = "+d);
         return d;
 
     }
