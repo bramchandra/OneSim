@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package routing.test;
+package routing.fuzzy;
 
 import core.Connection;
 import core.DTNHost;
@@ -15,60 +15,51 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import routing.DecisionEngineRouter;
+import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import net.sourceforge.jFuzzyLogic.rule.Variable;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.Duration;
-import net.sourceforge.jFuzzyLogic.FIS;
-//import report.ClosenessDecisionEngine;
-import routing.community.VarianceDecisionEngine;
+import routing.DecisionEngineRouter;
+//import routing.community.VarianceDecisionEngine;
 
 /**
  *
- * @author jarkom
+ * @author Afra Rian Yudianto, Sanata Dharma University
  */
-public class FuzzyBasedRouting implements RoutingDecisionEngine, VarianceDecisionEngine {
+public class FuzzyBasedRouter implements RoutingDecisionEngine {
 
+    public static final String FCL_NAMES = "fcl";
+    public static final String CLOSENESS = "closeness";
+    public static final String VARIANCE = "variance";
+    public static final String TRANSFER_OF_UTILITY = "hasil";
+
+    private FIS fcl;
     protected Map<DTNHost, Double> startTimestamps;
-    protected Map<DTNHost, Double> ratarata;
     protected Map<DTNHost, List<Duration>> connHistory;
-    protected Map<DTNHost, List<Double>> closenessMap;
-    protected Map<DTNHost, List<Double>> varianceMap;
 
-    double encounterPeer;
-    double encounterThis;
-
-    public FuzzyBasedRouting(Settings s) {
-
+    public FuzzyBasedRouter(Settings s) {
+        String fclString = s.getSetting(FCL_NAMES);
+        fcl = FIS.load(fclString);
     }
 
-    public FuzzyBasedRouting(FuzzyBasedRouting t) {
+    public FuzzyBasedRouter(FuzzyBasedRouter t) {
+        this.fcl = t.fcl;
         startTimestamps = new HashMap<DTNHost, Double>();
-        closenessMap = new HashMap<DTNHost, List<Double>>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
 
     }
-//    private FIS loadFcl(String loc){
-//        String fileName = "fcl/tipper.fcl";
-//        FIS fis = FIS.load(fileName,true);
-//
-//        // Error while loading?
-//        if( fis == null ) { 
-//            System.err.println("Can't load file: '" + fileName + "'");
-//            return null;
-//        }
-//        return fis;
-//    }
 
     @Override
     public void connectionUp(DTNHost thisHost, DTNHost peer) {
         // Find or create the connection history list
-        double time = 0;
+        double getLastDisconnect = 0;
         if (startTimestamps.containsKey(peer)) {
-            time = startTimestamps.get(peer);
+            getLastDisconnect = startTimestamps.get(peer);
         }
+        double currentTime = SimClock.getTime();
 
-        double etime = SimClock.getTime();
         List<Duration> history;
         if (!connHistory.containsKey(peer)) {
             history = new LinkedList<Duration>();
@@ -80,23 +71,21 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, VarianceDecisio
         }
 
 //         add this connection to the list
-        if (etime - time > 0) {
-            history.add(new Duration(time, etime));
+        if (currentTime - getLastDisconnect > 0) {
+            history.add(new Duration(getLastDisconnect, currentTime));
 
         }
         connHistory.put(peer, history);
+        this.startTimestamps.remove(peer);
     }
 
     @Override
     public void connectionDown(DTNHost thisHost, DTNHost peer) {
-        FuzzyBasedRouting de = this.getOtherDecisionEngine(peer);
-        startTimestamps.put(peer, SimClock.getTime());
+        this.startTimestamps.put(peer, SimClock.getTime());
     }
 
     @Override
     public void doExchangeForNewConnection(Connection con, DTNHost peer) {
-
-//        fuzzy de = this.getOtherDecisionEngine(peer);
     }
 
     @Override
@@ -108,25 +97,12 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, VarianceDecisio
     public boolean isFinalDest(Message m, DTNHost aHost) {
         return m.getTo() == aHost;
     }
-//    private double defuzzyfication(DTNHost nodes){
-//        double closeness = getCloseness(nodes);
-//        double variance = getVariance(nodes);
-//        FIS fcl = loadFcl("fcl/FuzzyControlLanguage.fcl");     
-//        fcl.setVariable("closeness", closeness);
-//        fcl.setVariable("variance", variance);
-//        fcl.evaluate();
-//        
-//        
-//    }
 
     @Override
     public boolean shouldSaveReceivedMessage(Message m, DTNHost thisHost) {
 
-        return m.getTo() != thisHost;
+        return true;
     }
-//    public DTNHost getPeer(DTNHost hosts){
-//        
-//    }
 
     @Override
     public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
@@ -135,17 +111,25 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, VarianceDecisio
         }
 
         DTNHost dest = m.getTo();
-        FuzzyBasedRouting de = getOtherDecisionEngine(otherHost);
-        encounterThis = this.getClosenessOfNodes(dest);
-        encounterPeer = de.getClosenessOfNodes(dest);
+        FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
 
-//        System.out.println(closeness);
-//        fcl.setVariable("closeness", this.getCloseness(dest));
-//        fcl.setVariable("closeness", de.getCloseness(dest));
-//        fcl.evaluate();
-//        System.out.println("My : "+encounterThis+ " , peer : " +encounterPeer);
-//        System.out.println("This"+encounterThis);
-        return encounterPeer > encounterThis;
+        double me = this.Defuzzification(dest);
+        double peer = de.Defuzzification(dest);
+        return me < peer;
+    }
+
+    private double Defuzzification(DTNHost nodes) {
+        double closenessValue = getClosenessOfNodes(nodes);
+        double varianceValue = getNormalizedVarianceOfNodes(nodes);
+        FunctionBlock functionBlock = fcl.getFunctionBlock(null);
+        
+        functionBlock.setVariable(CLOSENESS, closenessValue);
+        functionBlock.setVariable(VARIANCE, varianceValue);
+        functionBlock.evaluate();
+        
+        Variable tou = functionBlock.getVariable(TRANSFER_OF_UTILITY);
+        
+        return tou.getValue();
     }
 
     public double getVarianceOfNodes(DTNHost nodes) {
@@ -155,10 +139,26 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, VarianceDecisio
         double mean = getAverageShortestSeparationOfNodes(nodes);
         while (duration.hasNext()) {
             Duration d = duration.next();
-            temp += ((d.end - d.start) - mean) * ((d.end - d.start) - mean);
+            temp += Math.pow((d.end - d.start) - mean, 2);
         }
-
         return temp / list.size();
+    }
+
+    public double getNormalizedVarianceOfNodes(DTNHost nodes) {
+        double k = getList(nodes).size();
+        double N = 0;
+        double sigmf = 0;
+        Iterator<Duration> iterator = getList(nodes).iterator();
+        while (iterator.hasNext()) {
+            Duration duration = iterator.next();
+            double timeDuration = (duration.end - duration.start);
+            N += timeDuration;
+            sigmf += Math.pow(timeDuration, 2);
+        }
+        Double d = (k * (Math.pow(N, 2) - sigmf)) / (Math.pow(N, 2) * (k - 1));
+//        if (d.isNaN())
+//            return 0;
+        return d;
     }
 
     public List<Duration> getList(DTNHost nodes) {
@@ -167,18 +167,16 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, VarianceDecisio
         } else {
             List<Duration> d = new LinkedList<>();
             return d;
-
         }
     }
 
     private double getClosenessOfNodes(DTNHost nodes) {
         double rataShortestSeparation = getAverageShortestSeparationOfNodes(nodes);
         double variansi = getVarianceOfNodes(nodes);
-        double closenessValue = Math.pow(2.71828, -Math.pow(rataShortestSeparation, 2) / (2 * variansi));
-        List<Double> closenessList = new LinkedList<>();
-        closenessList.add(closenessValue);
-        closenessMap.put(nodes, closenessList);
-        return closenessValue;
+        Double c = Math.pow(2.71828, -(Math.pow(rataShortestSeparation, 2) / (2 * variansi)));
+//        if (c.isNaN())
+//            return 0;
+        return c;
     }
 
     public double getAverageShortestSeparationOfNodes(DTNHost nodes) {
@@ -194,32 +192,25 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, VarianceDecisio
 
     @Override
     public boolean shouldDeleteSentMessage(Message m, DTNHost otherHost) {
-        return m.getTo() == otherHost;
+        return false;
     }
 
     @Override
     public boolean shouldDeleteOldMessage(Message m, DTNHost hostReportingOld) {
-        return true;
+        return false;
     }
 
     @Override
     public RoutingDecisionEngine replicate() {
-        return new FuzzyBasedRouting(this);
+        return new FuzzyBasedRouter(this);
     }
 
-    private FuzzyBasedRouting getOtherDecisionEngine(DTNHost h) {
+    private FuzzyBasedRouter getOtherDecisionEngine(DTNHost h) {
         MessageRouter otherRouter = h.getRouter();
         assert otherRouter instanceof DecisionEngineRouter : "This router only works "
                 + " with other routers of same type";
 
-        return (FuzzyBasedRouting) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+        return (FuzzyBasedRouter) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
-
-    @Override
-    public Map<DTNHost, List<Double>> getVariance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-  
 
 }

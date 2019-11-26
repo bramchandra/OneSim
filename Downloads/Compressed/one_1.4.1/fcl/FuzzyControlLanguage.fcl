@@ -1,5 +1,5 @@
 
-FUNCTION_BLOCK tipper	// Block definition (there may be more than one block per file)
+FUNCTION_BLOCK haggle3Infocom5	// Block definition (there may be more than one block per file)
 
 VAR_INPUT				// Define input variables
 	closeness : REAL;
@@ -11,21 +11,21 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY closeness			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := (0, 1) (1, 0) ; 
-	TERM medium:= (0, 0) (0.3,1) (0.7,1) (1,0);
-	TERM high:= (1, 0) (0, 1);
+	TERM low := gbell 0.5701 11.1 1.39e-17 ; 
+	TERM medium:= gbell 0.13 3.28 0.753;
+	TERM high:= gbell 0.09127 3.28 1;
 END_FUZZIFY
 
 FUZZIFY variance			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-	TERM low := (0, 1) (1, 0) ; 
-	TERM medium:= (0, 0) (0.3,1) (0.7,1) (1,0);
-	TERM high:= (1, 0) (0, 1);
+	TERM low := gbell 0.2632 3.28 6.94e-18 ; 
+	TERM medium:= gbell 0.1366 5.07 0.466;
+	TERM high:= gbell 0.3611 5.32 1;
 END_FUZZIFY
 
 DEFUZZIFY hasil			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-	TERM low := (0,0) (5,1) (10,0);
-	TERM medium := (10,0) (15,1) (20,0);
-	TERM high := (20,0) (25,1) (30,0);
+	TERM low := gbell 0.2 2.5 6.939e-18;
+	TERM medium := gbell 0.2 2.5 0.5;
+	TERM high := gbell 0.2 2.5 1;
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -40,7 +40,7 @@ RULEBLOCK No1
         RULE 3 : IF closeness IS low AND variance IS low THEN hasil IS medium;
         RULE 4 : IF closeness IS medium AND variance IS high THEN hasil IS low;
         RULE 5 : IF closeness IS medium OR variance IS medium THEN hasil IS medium;
-        RULE 6 : IF closeness IS medium OR variance IS low THEN hasil IS high;
+        RULE 6 : IF closeness IS medium OR variance IS low THEN hasil IS medium;
         RULE 7 : IF closeness IS high OR variance IS high THEN hasil IS medium;
         RULE 8 : IF closeness IS high OR variance IS medium THEN hasil IS high;
         RULE 9 : IF closeness IS high OR variance IS low THEN hasil IS high;
