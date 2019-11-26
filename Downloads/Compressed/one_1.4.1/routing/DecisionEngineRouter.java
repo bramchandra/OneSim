@@ -125,7 +125,7 @@ public class DecisionEngineRouter extends ActiveRouter {
         outgoingMessages = new LinkedList<Tuple<Message, Connection>>();
         decider = r.decider.replicate();
         tombstoning = r.tombstoning;
-
+  
         if (this.tombstoning) {
             tombstones = new HashSet<String>(10);
         }

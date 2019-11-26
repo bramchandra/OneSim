@@ -10,6 +10,7 @@ import core.DTNHost;
 import core.Message;
 import core.Settings;
 import core.SimClock;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -145,7 +146,7 @@ public class FuzzyBasedRouting implements RoutingDecisionEngine, ClosenessDecisi
         } else {
             varianceList=varianceData.get(dest);
         }
-        
+                
         varianceList.add(getIndexOfDispertion(dest));
         varianceData.put(dest, varianceList);
 //        System.out.println(closeness);

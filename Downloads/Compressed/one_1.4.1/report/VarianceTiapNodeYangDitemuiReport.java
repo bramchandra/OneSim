@@ -53,7 +53,7 @@ public class VarianceTiapNodeYangDitemuiReport extends Report{
             }
             VarianceDecisionEngine cd = (VarianceDecisionEngine) de;
             Map<DTNHost, List<Double>> nodeComm = cd.getVariance();
-
+                   
             if (host.getAddress() == nodeAddress) {
                 varianceData = nodeComm;
             }
@@ -74,10 +74,11 @@ public class VarianceTiapNodeYangDitemuiReport extends Report{
         double avgValues = values/avgVariance.size();
 
         write("Variance Time To " +nodeAddress);
+        write("Nodes"+"\t"+"Variance");
         for (Map.Entry<DTNHost, Double> entry : avgVariance.entrySet()) {
             DTNHost key = entry.getKey();
             Double value = entry.getValue();
-            write(key+" "+ ' '+ value );
+            write(key+"\t"+ value );
         }
         write("Average Variance  = "+avgValues);
         super.done();
