@@ -90,11 +90,12 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine {
 
     @Override
     public boolean newMessage(Message m) {
+        
         return true;
     }
 
     @Override
-    public boolean isFinalDest(Message m, DTNHost aHost) {
+    public boolean isFinalDest(Message m, DTNHost aHost) {       
         return m.getTo() == aHost;
     }
 
@@ -106,7 +107,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine {
 
     @Override
     public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
-        if (m.getTo() == otherHost) {
+        if (m.getTo() == otherHost) {            
             return true;
         }
 
