@@ -22,32 +22,33 @@ import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.Duration;
 import routing.DecisionEngineRouter;
-//import routing.community.VarianceDecisionEngine;
+import routing.community.VarianceDecisionEngine;
 
 /**
  *
  * @author Afra Rian Yudianto, Sanata Dharma University
  */
-public class FuzzyBasedRouter implements RoutingDecisionEngine {
+public class FuzzyBasedRouter implements RoutingDecisionEngine,VarianceDecisionEngine {
 
-    public static final String FCL_NAMES = "fcl";
-    public static final String CLOSENESS = "closeness";
-    public static final String VARIANCE = "variance";
-    public static final String TRANSFER_OF_UTILITY = "hasil";
-
+//    public static final String FCL_NAMES = "fcl";
+//    public static final String CLOSENESS = "closeness";
+//    public static final String VARIANCE = "variance";
+//    public static final String TRANSFER_OF_UTILITY = "hasil";
+    public Map<DTNHost, List<Double>> varianceMap;
     private FIS fcl;
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, List<Duration>> connHistory;
 
     public FuzzyBasedRouter(Settings s) {
-        String fclString = s.getSetting(FCL_NAMES);
-        fcl = FIS.load(fclString);
+//        String fclString = s.getSetting(FCL_NAMES);
+//        fcl = FIS.load(fclString);
     }
 
     public FuzzyBasedRouter(FuzzyBasedRouter t) {
         this.fcl = t.fcl;
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
+        varianceMap = new HashMap<DTNHost, List<Double>>();
 
     }
 
@@ -107,31 +108,38 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine {
 
     @Override
     public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
-        if (m.getTo() == otherHost) {            
+        if (m.getTo() == otherHost) {         
+            
             return true;
         }
 
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-
-        double me = this.Defuzzification(dest);
-        double peer = de.Defuzzification(dest);
+         List<Double> variansi;
+        if (!varianceMap.containsKey(dest)) {
+            variansi = new LinkedList<Double>();
+        } else {
+            variansi = varianceMap.get(dest);
+        }
+        varianceMap.put(dest, variansi);
+        double me = this.getNormalizedVarianceOfNodes(dest);
+        double peer = de.getNormalizedVarianceOfNodes(dest);
         return me < peer;
     }
 
-    private double Defuzzification(DTNHost nodes) {
-        double closenessValue = getClosenessOfNodes(nodes);
-        double varianceValue = getNormalizedVarianceOfNodes(nodes);
-        FunctionBlock functionBlock = fcl.getFunctionBlock(null);
-        
-        functionBlock.setVariable(CLOSENESS, closenessValue);
-        functionBlock.setVariable(VARIANCE, varianceValue);
-        functionBlock.evaluate();
-        
-        Variable tou = functionBlock.getVariable(TRANSFER_OF_UTILITY);
-        
-        return tou.getValue();
-    }
+//    private double Defuzzification(DTNHost nodes) {
+//        double closenessValue = getClosenessOfNodes(nodes);
+//        double varianceValue = getNormalizedVarianceOfNodes(nodes);
+//        FunctionBlock functionBlock = fcl.getFunctionBlock(null);
+//        
+//        functionBlock.setVariable(CLOSENESS, closenessValue);
+//        functionBlock.setVariable(VARIANCE, varianceValue);
+//        functionBlock.evaluate();
+//        
+//        Variable tou = functionBlock.getVariable(TRANSFER_OF_UTILITY);
+//        
+//        return tou.getValue();
+//    }
 
     public double getVarianceOfNodes(DTNHost nodes) {
         List<Duration> list = getList(nodes);
@@ -212,6 +220,11 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine {
                 + " with other routers of same type";
 
         return (FuzzyBasedRouter) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
+    }
+
+    @Override
+    public Map<DTNHost, List<Double>> getVariance() {
+        return varianceMap;
     }
 
 }
