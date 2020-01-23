@@ -38,6 +38,7 @@ public class FrequencyEncounterPerNode extends Report{
             FrequencyDecisionEngine cd =(FrequencyDecisionEngine)de;
             Map<DTNHost, List<Duration>> nodeComm = cd.getFrequency();
             write(h+" "+nodeComm);
+            
         }
         super.done();
     }

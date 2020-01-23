@@ -28,7 +28,7 @@ import routing.community.VarianceDecisionEngine;
  *
  * @author Afra Rian Yudianto, Sanata Dharma University
  */
-public class FuzzyBasedRouter implements RoutingDecisionEngine,VarianceDecisionEngine {
+public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecisionEngine {
 
     public static final String FCL_NAMES = "fcl";
     public static final String CLOSENESS = "closeness";
@@ -91,12 +91,12 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine,VarianceDecisionE
 
     @Override
     public boolean newMessage(Message m) {
-        
+
         return true;
     }
 
     @Override
-    public boolean isFinalDest(Message m, DTNHost aHost) {       
+    public boolean isFinalDest(Message m, DTNHost aHost) {
         return m.getTo() == aHost;
     }
 
@@ -108,8 +108,8 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine,VarianceDecisionE
 
     @Override
     public boolean shouldSendMessageToHost(Message m, DTNHost otherHost) {
-        if (m.getTo() == otherHost) {         
-            
+        if (m.getTo() == otherHost) {
+
             return true;
         }
 
@@ -117,7 +117,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine,VarianceDecisionE
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
         double me = this.Defuzzification(dest);
         double peer = de.Defuzzification(dest);
-        System.out.println("me = "+me+" peer = "+peer);
+        System.out.println("me = " + me + " peer = " + peer);
         return me < peer;
     }
 
@@ -125,13 +125,13 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine,VarianceDecisionE
         double closenessValue = getClosenessOfNodes(nodes);
         double varianceValue = getNormalizedVarianceOfNodes(nodes);
         FunctionBlock functionBlock = fcl.getFunctionBlock(null);
-        
+
         functionBlock.setVariable(CLOSENESS, closenessValue);
         functionBlock.setVariable(VARIANCE, varianceValue);
         functionBlock.evaluate();
-        
+
         Variable tou = functionBlock.getVariable(TRANSFER_OF_UTILITY);
-        
+
         return tou.getValue();
     }
 
@@ -144,6 +144,16 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine,VarianceDecisionE
             Duration d = duration.next();
             temp += Math.pow((d.end - d.start) - mean, 2);
         }
+        List<Double> history;
+        if (!varianceMap.containsKey(nodes)) {
+            history = new LinkedList<Double>();
+//            connHistory.put(peer, history);
+
+        } else {
+            history = varianceMap.get(nodes);
+
+        }
+        varianceMap.put(nodes, history);
         return temp / list.size();
     }
 
@@ -218,7 +228,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine,VarianceDecisionE
 
     @Override
     public Map<DTNHost, List<Double>> getVariance() {
-        return varianceMap;
+        return this.varianceMap;
     }
 
 }
