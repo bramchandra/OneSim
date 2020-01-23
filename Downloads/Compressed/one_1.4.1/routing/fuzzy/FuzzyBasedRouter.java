@@ -187,8 +187,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
         double rataShortestSeparation = getAverageShortestSeparationOfNodes(nodes);
         double variansi = getVarianceOfNodes(nodes);
         Double c = Math.pow(2.71828, -(Math.pow(rataShortestSeparation, 2) / (2 * variansi)));
-//        if (c.isNaN())
-//            return 0;
         return c;
     }
 
