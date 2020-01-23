@@ -10,8 +10,9 @@ import core.*;
 import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
+import routing.community.AverageWinCentrality1;
 
-public class BubbleRap implements RoutingDecisionEngine, CommunityDetectionEngine {
+public class BubbleRap implements RoutingDecisionEngine, GlobalCentralityEngine {
 
     // Start-initialisation
     public static final String COMMUNITY_ALG_SETTING = "communityDetectAlg";  //added
@@ -19,6 +20,7 @@ public class BubbleRap implements RoutingDecisionEngine, CommunityDetectionEngin
 
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, List<Duration>> connHistory;
+    protected List<Double> globalCentrality;
 
     protected CommunityDetection community;  //added
     protected Centrality centrality;
@@ -158,7 +160,7 @@ public class BubbleRap implements RoutingDecisionEngine, CommunityDetectionEngin
         return this.centrality.getLocalCentrality(connHistory, community);
     }
 
-    protected double getGlobalCentrality() {
+    public double getGlobalCentrality() {
         return this.centrality.getGlobalCentrality(connHistory);
     }
 
@@ -173,6 +175,11 @@ public class BubbleRap implements RoutingDecisionEngine, CommunityDetectionEngin
     //for REPORT purpose: CommunityDetectionReport
     public Set<DTNHost> getLocalCommunity() {
         return this.community.getLocalCommunity();
+    }
+ 
+    @Override
+    public int[] ArrayGlobalCentrality() {
+        return this.centrality.getGlobalArrayCentrality(connHistory);
     }
 
 }

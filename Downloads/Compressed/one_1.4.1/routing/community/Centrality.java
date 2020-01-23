@@ -42,6 +42,8 @@ public interface Centrality
 	 * @return Value corresponding to the global centrality
 	 */
 	public double getGlobalCentrality(Map<DTNHost, List<Duration>> connHistory);
+	public int [] getGlobalArrayCentrality(Map<DTNHost, List<Duration>> connHistory);
+	
 	
 	/**
 	 * Returns the computed local centrality based on the connection history and

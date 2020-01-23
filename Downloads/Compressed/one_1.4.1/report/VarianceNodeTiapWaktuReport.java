@@ -73,7 +73,6 @@ public class VarianceNodeTiapWaktuReport extends Report implements UpdateListene
         }
 
         if (simTime - lastRecord >= interval) {
-//            Map<DTNHost, List<Double>> closenessMap = null;
             Map<DTNHost, List<Double>> varianceMap = new HashMap<DTNHost, List<Double>>();
             for (DTNHost ho : hosts) {
                 MessageRouter r = ho.getRouter();

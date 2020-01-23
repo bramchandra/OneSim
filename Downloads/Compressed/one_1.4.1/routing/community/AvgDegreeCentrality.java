@@ -229,4 +229,9 @@ public class AvgDegreeCentrality implements Centrality
 		return new AvgDegreeCentrality(this);
 	}
 
+    @Override
+    public int[] getGlobalArrayCentrality(Map<DTNHost, List<Duration>> connHistory) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
