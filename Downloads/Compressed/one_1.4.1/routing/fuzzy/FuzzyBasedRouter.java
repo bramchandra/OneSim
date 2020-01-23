@@ -169,8 +169,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
             sigmf += Math.pow(timeDuration, 2);
         }
         Double d = (k * (Math.pow(N, 2) - sigmf)) / (Math.pow(N, 2) * (k - 1));
-//        if (d.isNaN())
-//            return 0;
         return d;
     }
 
