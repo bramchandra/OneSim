@@ -22,19 +22,20 @@ import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.Duration;
 import routing.DecisionEngineRouter;
-import routing.community.VarianceDecisionEngine;
+import routing.community.VarianceDetectionReport;
 
 /**
  *
  * @author Afra Rian Yudianto, Sanata Dharma University
  */
-public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecisionEngine {
+public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectionReport {
 
     public static final String FCL_NAMES = "fcl";
     public static final String CLOSENESS = "closeness";
     public static final String VARIANCE = "variance";
     public static final String TRANSFER_OF_UTILITY = "hasil";
     public Map<DTNHost, List<Double>> varianceMap;
+    public Map<DTNHost, List<Double>> bufferMap;
     private FIS fcl;
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, List<Duration>> connHistory;
@@ -49,6 +50,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
         varianceMap = new HashMap<DTNHost, List<Double>>();
+        bufferMap = new HashMap<DTNHost, List<Double>>();
 
     }
 
@@ -117,13 +119,14 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
         double me = this.Defuzzification(dest);
         double peer = de.Defuzzification(dest);
-        System.out.println("me = " + me + " peer = " + peer);
+//        System.out.println("me = " + me + " peer = " + peer);
         return me < peer;
     }
 
     private double Defuzzification(DTNHost nodes) {
         double closenessValue = getClosenessOfNodes(nodes);
         double varianceValue = getNormalizedVarianceOfNodes(nodes);
+        getBufferSize(nodes);
         FunctionBlock functionBlock = fcl.getFunctionBlock(null);
 
         functionBlock.setVariable(CLOSENESS, closenessValue);
@@ -136,7 +139,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
     }
 
     public double getVarianceOfNodes(DTNHost nodes) {
-        List<Duration> list = getList(nodes);
+        List<Duration> list = getListDuration(nodes);
         Iterator<Duration> duration = list.iterator();
         double temp = 0;
         double mean = getAverageShortestSeparationOfNodes(nodes);
@@ -147,7 +150,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
         List<Double> history;
         if (!varianceMap.containsKey(nodes)) {
             history = new LinkedList<Double>();
-//            connHistory.put(peer, history);
 
         } else {
             history = varianceMap.get(nodes);
@@ -157,11 +159,26 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
         return temp / list.size();
     }
 
+    public void getBufferSize(DTNHost nodes) {
+        List<Double> history;
+        if (!bufferMap.containsKey(nodes)) {
+            history = new LinkedList<Double>();
+            
+        } else {
+            history = bufferMap.get(nodes);
+
+        }
+        Double buffer = Double.valueOf(nodes.getRouter().getFreeBufferSize());
+        history.add(buffer);
+        bufferMap.put(nodes, history);
+//        int variabel = nodes.getRouter().getFreeBufferSize();
+    }
+
     public double getNormalizedVarianceOfNodes(DTNHost nodes) {
-        double k = getList(nodes).size();
+        double k = getListDuration(nodes).size();
         double N = 0;
         double sigmf = 0;
-        Iterator<Duration> iterator = getList(nodes).iterator();
+        Iterator<Duration> iterator = getListDuration(nodes).iterator();
         while (iterator.hasNext()) {
             Duration duration = iterator.next();
             double timeDuration = (duration.end - duration.start);
@@ -172,7 +189,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
         return d;
     }
 
-    public List<Duration> getList(DTNHost nodes) {
+    public List<Duration> getListDuration(DTNHost nodes) {
         if (connHistory.containsKey(nodes)) {
             return connHistory.get(nodes);
         } else {
@@ -189,7 +206,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
     }
 
     public double getAverageShortestSeparationOfNodes(DTNHost nodes) {
-        List<Duration> list = getList(nodes);
+        List<Duration> list = getListDuration(nodes);
         Iterator<Duration> duration = list.iterator();
         double hasil = 0;
         while (duration.hasNext()) {
@@ -221,10 +238,15 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDecision
 
         return (FuzzyBasedRouter) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
+//FOR REPORT PURPOSE
 
     @Override
-    public Map<DTNHost, List<Double>> getVariance() {
+    public Map<DTNHost, List<Double>> getVarianceMap() {
         return this.varianceMap;
+    }
+
+    public Map<DTNHost, List<Double>> getBufferMap() {
+        return this.bufferMap;
     }
 
 }

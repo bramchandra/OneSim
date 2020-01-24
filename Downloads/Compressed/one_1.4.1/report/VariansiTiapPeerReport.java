@@ -14,7 +14,7 @@ import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.Duration;
 //import routing.community.FrequencyDecisionEngine;
-import routing.community.VarianceDecisionEngine;
+import routing.community.VarianceDetectionReport;
 
 /**
  *
@@ -33,12 +33,12 @@ public class VariansiTiapPeerReport extends Report{
                 continue;
             }
             RoutingDecisionEngine de = ((DecisionEngineRouter)r).getDecisionEngine();
-            if(!(de instanceof VarianceDecisionEngine)){
+            if(!(de instanceof VarianceDetectionReport)){
                 continue;
             }
             
-            VarianceDecisionEngine cd =(VarianceDecisionEngine)de;
-            Map<DTNHost, List<Double>> nodeComm = cd.getVariance();
+            VarianceDetectionReport cd =(VarianceDetectionReport)de;
+            Map<DTNHost, List<Double>> nodeComm = cd.getVarianceMap();
 //            write(h+" ");
             write(h+" "+nodeComm.get(h));
         }

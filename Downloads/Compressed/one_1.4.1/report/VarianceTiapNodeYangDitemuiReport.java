@@ -15,7 +15,7 @@ import java.util.Map;
 import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
-import routing.community.VarianceDecisionEngine;
+import routing.community.VarianceDetectionReport;
 
 /**
  * Provides the inter-contact duration data 
@@ -51,8 +51,8 @@ public class VarianceTiapNodeYangDitemuiReport extends Report{
             if (!(de instanceof RoutingDecisionEngine)) {
                 continue;
             }
-            VarianceDecisionEngine cd = (VarianceDecisionEngine) de;
-            Map<DTNHost, List<Double>> nodeComm = cd.getVariance();
+            VarianceDetectionReport cd = (VarianceDetectionReport) de;
+            Map<DTNHost, List<Double>> nodeComm = cd.getVarianceMap();
                    
             if (host.getAddress() == nodeAddress) {
                 varianceData = nodeComm;
