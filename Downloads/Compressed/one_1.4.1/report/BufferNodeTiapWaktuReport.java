@@ -26,10 +26,10 @@ import core.UpdateListener;
 import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
-import routing.community.ClosenessDetectionEngine;
+import routing.community.BufferDetectionEngine;
 
 
-public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListener {
+public class BufferNodeTiapWaktuReport extends Report implements UpdateListener {
 
     /**
      * Record occupancy every nth second -setting id ({@value}). Defines the
@@ -44,12 +44,11 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
 //    private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
-    private Map<DTNHost, List<Double>> closenessPerWaktu = new HashMap<DTNHost, List<Double>>();
-    private Map<DTNHost, List<Double>> variancePerWaktu = new HashMap<DTNHost, List<Double>>();
+    private Map<DTNHost, List<Double>> bufferPerWaktu = new HashMap<DTNHost, List<Double>>();
     private int updateCounter = 0;  //new added
     private String print;  //new added
 
-    public ClosenessNodeTiapWaktuReport() {
+    public BufferNodeTiapWaktuReport() {
         super();
 
         Settings settings = getSettings();
@@ -75,7 +74,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
         }
 
         if (simTime - lastRecord >= interval) {
-            Map<DTNHost, List<Double>> closenessMap = new HashMap<DTNHost, List<Double>>();
+            Map<DTNHost, List<Double>> BufferMap = new HashMap<DTNHost, List<Double>>();
             
             for (DTNHost ho : hosts) {
                 MessageRouter r = ho.getRouter();
@@ -83,16 +82,16 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                     continue;
                 }
                 RoutingDecisionEngine de = ((DecisionEngineRouter) r).getDecisionEngine();
-                if ((de instanceof ClosenessDetectionEngine)) {
+                if ((de instanceof BufferDetectionEngine)) {
                     continue;
                 }
               
-                ClosenessDetectionEngine vd = (ClosenessDetectionEngine) de;
-                closenessMap = vd.getCloseness();
+                BufferDetectionEngine vd = (BufferDetectionEngine) de;
+                BufferMap = vd.getBufferMap();
 
             }
             
-            for (Map.Entry<DTNHost, List<Double>> entry : closenessMap.entrySet()) {
+            for (Map.Entry<DTNHost, List<Double>> entry : BufferMap.entrySet()) {
                 DTNHost key = entry.getKey();
                 List<Double> value = entry.getValue();
                 double temp = 0;
@@ -100,17 +99,17 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
                     temp += double1;
                 }
                 List<Double> hasil;
-                if (!closenessPerWaktu.containsKey(key)) {
+                if (!bufferPerWaktu.containsKey(key)) {
                     hasil = new LinkedList<Double>();
 
                 } else {
-                    hasil = closenessPerWaktu.get(key);
+                    hasil = bufferPerWaktu.get(key);
 
                 }
 
                 hasil.add(temp / value.size());
-                closenessPerWaktu.put(key, hasil);
-                write(key + " " + temp / value.size());
+                bufferPerWaktu.put(key, hasil);
+//                write(key + " " + temp / value.size());
             }
 
             this.lastRecord = simTime - simTime % interval;
@@ -124,7 +123,7 @@ public class ClosenessNodeTiapWaktuReport extends Report implements UpdateListen
      */
     @Override
     public void done() {
-        for (Map.Entry<DTNHost, List<Double>> entry : closenessPerWaktu.entrySet()) {
+        for (Map.Entry<DTNHost, List<Double>> entry : bufferPerWaktu.entrySet()) {
             DTNHost key = entry.getKey();
             List<Double> value = entry.getValue();
 

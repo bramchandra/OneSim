@@ -26,8 +26,7 @@ import core.UpdateListener;
 import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
-import routing.community.ClosenessDecisionEngine;
-import routing.community.VarianceDetectionReport;
+import routing.community.VarianceDetectionEngine;
 
 public class VarianceNodeTiapWaktuReport extends Report implements UpdateListener {
 
@@ -80,10 +79,10 @@ public class VarianceNodeTiapWaktuReport extends Report implements UpdateListene
                     continue;
                 }
                 RoutingDecisionEngine de = ((DecisionEngineRouter) r).getDecisionEngine();
-                if (!(de instanceof VarianceDetectionReport)) {
+                if (!(de instanceof VarianceDetectionEngine)) {
                     continue;
                 }
-                VarianceDetectionReport vd = (VarianceDetectionReport) de;
+                VarianceDetectionEngine vd = (VarianceDetectionEngine) de;
                 varianceMap = vd.getVarianceMap();
                 if(ho.getAddress()==0){
                     

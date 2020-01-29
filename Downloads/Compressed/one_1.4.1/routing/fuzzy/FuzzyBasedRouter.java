@@ -22,13 +22,14 @@ import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.Duration;
 import routing.DecisionEngineRouter;
-import routing.community.VarianceDetectionReport;
+import routing.community.BufferDetectionEngine;
+import routing.community.VarianceDetectionEngine;
 
 /**
  *
  * @author Afra Rian Yudianto, Sanata Dharma University
  */
-public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectionReport {
+public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionEngine {
 
     public static final String FCL_NAMES = "fcl";
     public static final String CLOSENESS = "closeness";
@@ -240,10 +241,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectio
     }
 //FOR REPORT PURPOSE
 
-    @Override
-    public Map<DTNHost, List<Double>> getVarianceMap() {
-        return this.varianceMap;
-    }
 
     public Map<DTNHost, List<Double>> getBufferMap() {
         return this.bufferMap;

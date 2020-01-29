@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author Khusus Skripsi Fuzzy
  */
-public interface ClosenessDecisionEngine {
+public interface VarianceDetectionEngine {
 
-    public Map<DTNHost, List<Double>> getCloseness();
+    public Map<DTNHost, List<Double>> getVarianceMap();
 }

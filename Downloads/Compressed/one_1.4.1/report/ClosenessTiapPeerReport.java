@@ -15,7 +15,7 @@ import routing.RoutingDecisionEngine;
 import routing.community.Duration;
 //import routing.community.FrequencyDecisionEngine;
 //import routing.community.VarianceDecisionEngine;
-import routing.community.ClosenessDecisionEngine;
+import routing.community.ClosenessDetectionEngine;
 
 /**
  *
@@ -34,11 +34,11 @@ public class ClosenessTiapPeerReport extends Report{
                 continue;
             }
             RoutingDecisionEngine de = ((DecisionEngineRouter)r).getDecisionEngine();
-            if(!(de instanceof ClosenessDecisionEngine)){
+            if(!(de instanceof ClosenessDetectionEngine)){
                 continue;
             }
             
-            ClosenessDecisionEngine cd =(ClosenessDecisionEngine)de;
+            ClosenessDetectionEngine cd =(ClosenessDetectionEngine)de;
 //            Map<DTNHost, Double> nodeComm = cd.getCloseness();
 //            write(h+" ");
 //            write(h+" "+nodeComm.get(h));
