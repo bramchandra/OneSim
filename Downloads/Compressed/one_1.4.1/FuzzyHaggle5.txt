@@ -3,7 +3,8 @@
 #
 
 ## Scenario settings
-Scenario.name = HaggleInfocom5-FuzzyBasedRouter
+# Scenario.name = HaggleInfocom5-FuzzyBasedRouter
+Scenario.name = COBA BUFFER
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
 # 43200s == 12h
@@ -83,13 +84,15 @@ MovementModel.worldSize = 100, 100
 MovementModel.warmup = 1000
 
 # how many reports to load
-Report.nrofReports = 3
+Report.nrofReports = 1
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/FuzzyFix/HaggleInfocomFix
+# Report.reportDir = reports/FuzzyFix/HaggleInfocomFix
+Report.reportDir = reports/COBA
 # Report classes to load
-Report.report1 = LatencyPerContactReport
-Report.report2 = PercentageMessageDeliveredPerContactReport
-Report.report3 = OverheadPerContactReport
+Report.report1 = BufferNodeTiapWaktuReport
+# Report.report1 = LatencyPerContactReport
+# Report.report2 = PercentageMessageDeliveredPerContactReport
+# Report.report3 = OverheadPerContactReport
 # Report.closenessToNodeID = [0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40]

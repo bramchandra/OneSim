@@ -74,8 +74,8 @@ public class BufferNodeTiapWaktuReport extends Report implements UpdateListener 
         }
 
         if (simTime - lastRecord >= interval) {
-            Map<DTNHost, List<Double>> BufferMap = new HashMap<DTNHost, List<Double>>();
-            
+//            Map<DTNHost, List<Double>> bufferPerWaktu = new HashMap<DTNHost, List<Double>>();
+
             for (DTNHost ho : hosts) {
                 MessageRouter r = ho.getRouter();
                 if (!(r instanceof DecisionEngineRouter)) {
@@ -87,30 +87,31 @@ public class BufferNodeTiapWaktuReport extends Report implements UpdateListener 
                 }
               
                 BufferDetectionEngine vd = (BufferDetectionEngine) de;
-                BufferMap = vd.getBufferMap();
-
+                bufferPerWaktu = vd.getBufferMap();
+                System.out.println(vd.getBufferMap());
             }
             
-            for (Map.Entry<DTNHost, List<Double>> entry : BufferMap.entrySet()) {
-                DTNHost key = entry.getKey();
-                List<Double> value = entry.getValue();
-                double temp = 0;
-                for (Double double1 : value) {
-                    temp += double1;
-                }
-                List<Double> hasil;
-                if (!bufferPerWaktu.containsKey(key)) {
-                    hasil = new LinkedList<Double>();
-
-                } else {
-                    hasil = bufferPerWaktu.get(key);
-
-                }
-
-                hasil.add(temp / value.size());
-                bufferPerWaktu.put(key, hasil);
+//            for (Map.Entry<DTNHost, List<Double>> entry : bufferPerWaktu.entrySet()) {
+//                DTNHost key = entry.getKey();
+//                List<Double> value = entry.getValue();
+//                double temp = 0;
+//                for (Double double1 : value) {
+//                    temp += double1;
+//                }
+//                List<Double> hasil;
+//                if (!bufferPerWaktu.containsKey(key)) {
+//                    hasil = new LinkedList<Double>();
+//
+//                } else {
+//                    hasil = bufferPerWaktu.get(key);
+//
+//                }
+//
+//                hasil.add(temp / value.size());
+//                bufferPerWaktu.put(key, hasil);
+//                System.out.println("Node : "+key+"");
 //                write(key + " " + temp / value.size());
-            }
+//            }
 
             this.lastRecord = simTime - simTime % interval;
         }
@@ -126,7 +127,7 @@ public class BufferNodeTiapWaktuReport extends Report implements UpdateListener 
         for (Map.Entry<DTNHost, List<Double>> entry : bufferPerWaktu.entrySet()) {
             DTNHost key = entry.getKey();
             List<Double> value = entry.getValue();
-
+//            System.out.println(key + " " + value);
             write(key + " " + value);
 
         }
