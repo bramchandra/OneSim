@@ -29,14 +29,14 @@ import routing.community.VarianceDetectionEngine;
  *
  * @author Afra Rian Yudianto, Sanata Dharma University
  */
-public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionEngine {
+public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectionEngine {
 
 //    public static final String FCL_NAMES = "fcl";
     public static final String CLOSENESS = "closeness";
     public static final String VARIANCE = "variance";
     public static final String TRANSFER_OF_UTILITY = "hasil";
     public Map<DTNHost, List<Double>> varianceMap;
-    public Map<DTNHost, List<Double>> bufferMap;
+    public Map<DTNHost, List<Integer>> bufferMap;
     public List<Integer> bufferList;
     private FIS fcl;
     protected Map<DTNHost, Double> startTimestamps;
@@ -52,7 +52,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
         varianceMap = new HashMap<DTNHost, List<Double>>();
-        bufferMap = new HashMap<DTNHost, List<Double>>();
+        bufferMap = new HashMap<DTNHost, List<Integer>>();
         bufferList = new LinkedList<>();
 
     }
@@ -118,19 +118,22 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 
             return true;
         }
-        double me = bufferList.get(bufferList.size()-1);
-        double peer = otherHost.getRouter().getFreeBufferSize();
+//        System.out.println(bufferList.size());
+
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-         List<Double> history;
-        if (!bufferMap.containsKey(otherHost)) {
+        Double me = this.getClosenessOfNodes(otherHost);
+        Double peer = de.getClosenessOfNodes(otherHost);
+        List<Double> history;
+        if (!varianceMap.containsKey(otherHost)) {
             history = new LinkedList<Double>();
 
         } else {
-            history = bufferMap.get(otherHost);
+            history = varianceMap.get(otherHost);
         }
         history.add(me);
-        bufferMap.put(otherHost, history);
+        varianceMap.put(otherHost, history);
+//        bufferList.clear();
 
 //        System.out.println("me = " + me + " peer = " + peer);
         return me < peer;
@@ -138,7 +141,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 
     private double DefuzzificationSimilarity(DTNHost nodes) {
         double closenessValue = getClosenessOfNodes(nodes);
-        double varianceValue = getNormalizedVarianceOfNodes(nodes);        
+        double varianceValue = getNormalizedVarianceOfNodes(nodes);
         FunctionBlock functionBlock = fcl.getFunctionBlock(null);
 
         functionBlock.setVariable(CLOSENESS, closenessValue);
@@ -149,9 +152,10 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 
         return tou.getValue();
     }
+
     private double Defuzzificationbuffer(DTNHost nodes) {
         double closenessValue = getClosenessOfNodes(nodes);
-        double varianceValue = getNormalizedVarianceOfNodes(nodes);        
+        double varianceValue = getNormalizedVarianceOfNodes(nodes);
         FunctionBlock functionBlock = fcl.getFunctionBlock(null);
 
         functionBlock.setVariable(CLOSENESS, closenessValue);
@@ -183,8 +187,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         varianceMap.put(nodes, history);
         return temp / list.size();
     }
-
-    
 
     public double getNormalizedVarianceOfNodes(DTNHost nodes) {
         double k = getListDuration(nodes).size();
@@ -252,9 +254,13 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
     }
 //FOR REPORT PURPOSE
 
-
-    public Map<DTNHost, List<Double>> getBufferMap() {
+    public Map<DTNHost, List<Integer>> getBufferMap() {
         return bufferMap;
+    }
+
+    @Override
+    public Map<DTNHost, List<Double>> getVarianceMap() {
+        return varianceMap;
     }
 
 }

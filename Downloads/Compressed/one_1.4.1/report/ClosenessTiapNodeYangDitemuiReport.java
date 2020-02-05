@@ -18,17 +18,19 @@ import routing.RoutingDecisionEngine;
 import routing.community.VarianceDetectionEngine;
 
 /**
- * Provides the inter-contact duration data 
- * for making probability density function
+ * Provides the inter-contact duration data for making probability density
+ * function
+ *
  * @author Gregorius Bima, Sanata Dharma University
  */
-public class VarianceTiapNodeYangDitemuiReport extends Report{
-    public static final String NODE_ID = "varianceToNodeID";
+public class ClosenessTiapNodeYangDitemuiReport extends Report {
+
+    public static final String NODE_ID = "ToNodeID";
     private int nodeAddress;
-    private Map<DTNHost, List<Double>> varianceData ;
+    private Map<DTNHost, List<Double>> varianceData;
     private Map<DTNHost, Double> avgVariance;
 
-    public VarianceTiapNodeYangDitemuiReport() {
+    public ClosenessTiapNodeYangDitemuiReport() {
         super();
         Settings s = getSettings();
         if (s.contains(NODE_ID)) {
@@ -53,46 +55,49 @@ public class VarianceTiapNodeYangDitemuiReport extends Report{
             }
             VarianceDetectionEngine cd = (VarianceDetectionEngine) de;
             Map<DTNHost, List<Double>> nodeComm = cd.getVarianceMap();
-                   
+
             if (host.getAddress() == nodeAddress) {
                 varianceData = nodeComm;
             }
 
         }
-        
-        for (DTNHost node : nodes) {
-            if (varianceData.containsKey(node)) {
-                double avg = avgVarianceCalc(varianceData.get(node));
-                avgVariance.put(node, avg);
-            }
-        }
-        double values = 0;
-        for (Double avgEncounter : avgVariance.values()) {
-            values += avgEncounter;
-        }
-        
-        double avgValues = values/avgVariance.size();
 
-        write("Variance Time To " +nodeAddress);
-        write("Nodes"+"\t"+"Variance");
-        for (Map.Entry<DTNHost, Double> entry : avgVariance.entrySet()) {
+//        for (DTNHost node : nodes) {
+//            if (varianceData.containsKey(node)) {
+//                double avg = avgVarianceCalc(varianceData.get(node));
+//                avgVariance.put(node, avg);
+//            }
+//        }
+//        double values = 0;
+//        for (Double avgEncounter : avgVariance.values()) {
+//            values += avgEncounter;
+//        }
+//        
+//        double avgValues = values/avgVariance.size();
+//        write("Variance Time To " +nodeAddress);
+//        write("Nodes"+"\n"+"Variance");
+        for (Map.Entry<DTNHost, List<Double>> entry : varianceData.entrySet()) {
             DTNHost key = entry.getKey();
-            Double value = entry.getValue();
-            write(key+"\t"+ value );
+            List<Double> value = entry.getValue();
+            String print = "";
+            for (Double double1 : value) {
+                print = print + "\n" + double1;
+            }
+            write(print);
         }
-        write("Average Variance  = "+avgValues);
+//        write("Average Variance  = "+avgValues);
         super.done();
     }
-    
-    private double avgVarianceCalc(List<Double> varianceList) {
-        Iterator<Double> i = varianceList.iterator();
-        double jumlah = 0;
-        while (i.hasNext()) {
-            Double d = i.next();
-            jumlah += d;
-        }
 
-        double avgDuration = jumlah / varianceList.size();
-        return avgDuration;
-    } 
+//    private double avgVarianceCalc(List<Double> varianceList) {
+//        Iterator<Double> i = varianceList.iterator();
+//        double jumlah = 0;
+//        while (i.hasNext()) {
+//            Double d = i.next();
+//            jumlah += d;
+//        }
+//
+//        double avgDuration = jumlah / varianceList.size();
+//        return avgDuration;
+//    } 
 }
