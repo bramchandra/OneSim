@@ -201,14 +201,14 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectio
         }
     }
 
-    private double getClosenessOfNodes(DTNHost nodes) {
+    private Double getClosenessOfNodes(DTNHost nodes) {
         double rataShortestSeparation = getAverageShortestSeparationOfNodes(nodes);
         double variansi = getVarianceOfNodes(nodes);
 
         Double c = Math.exp(-(Math.pow(rataShortestSeparation, 2) / (2 * variansi)));
 //        System.out.println(c);
-        if (c.isNaN()) {
-              c=0.0;
+        if(c.isNaN()){
+            c=null;
         }
         return c;
     }
