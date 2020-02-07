@@ -86,7 +86,7 @@ Report.nrofReports = 1
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/FuzzyFix/PDF/Closeness/Haggle
+Report.reportDir = reports/FuzzyFix/PDF/Closeness
 # Report.reportDir = reports/FuzzyFix/PDF/Buffer/Haggle
 # Report classes to load
 Report.report1 = ClosenessTiapNodeYangDitemuiReport

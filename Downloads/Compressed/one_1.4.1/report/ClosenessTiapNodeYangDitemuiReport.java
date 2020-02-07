@@ -58,46 +58,48 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
 
             if (host.getAddress() == nodeAddress) {
                 varianceData = nodeComm;
+//                System.out.println(varianceData+"\n");
             }
 
         }
-
-//        for (DTNHost node : nodes) {
-//            if (varianceData.containsKey(node)) {
-//                double avg = avgVarianceCalc(varianceData.get(node));
-//                avgVariance.put(node, avg);
-//            }
-//        }
-//        double values = 0;
-//        for (Double avgEncounter : avgVariance.values()) {
-//            values += avgEncounter;
-//        }
-//        
+//
+        for (DTNHost node : nodes) {
+            if (varianceData.containsKey(node)) {
+                double avg = avgVarianceCalc(varianceData.get(node));            
+                avgVariance.put(node, avg);
+            }
+        }
+        double values = 0;
+        for (Double avgEncounter : avgVariance.values()) {
+            values += avgEncounter;
+        }
+        
 //        double avgValues = values/avgVariance.size();
 //        write("Variance Time To " +nodeAddress);
-//        write("Nodes"+"\n"+"Variance");
-        for (Map.Entry<DTNHost, List<Double>> entry : varianceData.entrySet()) {
+//        write("Nodes"+"\n"+"Closeness");
+        for (Map.Entry<DTNHost, Double> entry : avgVariance.entrySet()) {
             DTNHost key = entry.getKey();
-            List<Double> value = entry.getValue();
-            String print = "";
-            for (Double double1 : value) {
-                print = print + "\n" + double1;
-            }
-            write(print);
+            Double value = entry.getValue();
+//            String print = "";
+//            for (Double double1 : value) {
+//                print = print + "\n" + double1;
+//            }
+//            write("\n"+print);
+                write(key+"\t"+value);
         }
 //        write("Average Variance  = "+avgValues);
         super.done();
     }
 
-//    private double avgVarianceCalc(List<Double> varianceList) {
-//        Iterator<Double> i = varianceList.iterator();
-//        double jumlah = 0;
-//        while (i.hasNext()) {
-//            Double d = i.next();
-//            jumlah += d;
-//        }
-//
-//        double avgDuration = jumlah / varianceList.size();
-//        return avgDuration;
-//    } 
+    private double avgVarianceCalc(List<Double> varianceList) {
+        Iterator<Double> i = varianceList.iterator();
+        double jumlah = 0;
+        while (i.hasNext()) {
+            Double d = i.next();
+            jumlah += d;
+        }
+
+        double avgDuration = jumlah / varianceList.size();
+        return avgDuration;
+    } 
 }

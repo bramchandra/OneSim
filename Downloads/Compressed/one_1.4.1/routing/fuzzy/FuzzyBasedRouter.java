@@ -118,12 +118,13 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectio
 
             return true;
         }
-//        System.out.println(bufferList.size());
 
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Double me = this.getClosenessOfNodes(otherHost);
-        Double peer = de.getClosenessOfNodes(otherHost);
+//        Integer me = bufferList.get(bufferList.size()-1);
+//        Integer peer = otherHost.getRouter().getFreeBufferSize();
+        Double me = this.getClosenessOfNodes(dest);
+        Double peer = de.getClosenessOfNodes(dest);
         List<Double> history;
         if (!varianceMap.containsKey(otherHost)) {
             history = new LinkedList<Double>();
@@ -133,9 +134,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectio
         }
         history.add(me);
         varianceMap.put(otherHost, history);
-//        bufferList.clear();
-
-//        System.out.println("me = " + me + " peer = " + peer);
         return me < peer;
     }
 
@@ -176,15 +174,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectio
             Duration d = duration.next();
             temp += Math.pow((d.end - d.start) - mean, 2);
         }
-        List<Double> history;
-        if (!varianceMap.containsKey(nodes)) {
-            history = new LinkedList<Double>();
-
-        } else {
-            history = varianceMap.get(nodes);
-
-        }
-        varianceMap.put(nodes, history);
         return temp / list.size();
     }
 
@@ -215,7 +204,12 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectio
     private double getClosenessOfNodes(DTNHost nodes) {
         double rataShortestSeparation = getAverageShortestSeparationOfNodes(nodes);
         double variansi = getVarianceOfNodes(nodes);
-        Double c = Math.pow(2.71828, -(Math.pow(rataShortestSeparation, 2) / (2 * variansi)));
+
+        Double c = Math.exp(-(Math.pow(rataShortestSeparation, 2) / (2 * variansi)));
+//        System.out.println(c);
+        if (c.isNaN()) {
+              c=0.0;
+        }
         return c;
     }
 
@@ -254,10 +248,9 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, VarianceDetectio
     }
 //FOR REPORT PURPOSE
 
-    public Map<DTNHost, List<Integer>> getBufferMap() {
-        return bufferMap;
-    }
-
+//    public Map<DTNHost, List<Integer>> getBufferMap() {
+//        return bufferMap;
+//    }
     @Override
     public Map<DTNHost, List<Double>> getVarianceMap() {
         return varianceMap;
