@@ -14,5 +14,5 @@ import java.util.Map;
  * @author Khusus Skripsi Fuzzy
  */
 public interface BufferDetectionEngine {
-    public Map<DTNHost, List<Integer>> getBufferMap();
+    public Map<DTNHost, List<Double>> getBufferMap();
 }

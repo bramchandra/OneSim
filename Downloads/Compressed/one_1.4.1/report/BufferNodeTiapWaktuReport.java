@@ -44,7 +44,7 @@ public class BufferNodeTiapWaktuReport extends Report implements UpdateListener 
     private double lastRecord = Double.MIN_VALUE;
     private int interval;
 //    private Map<DTNHost, List<Double>> closenessCounts = new HashMap<DTNHost, List<Double>>();
-    private Map<DTNHost, List<Integer>> bufferPerWaktu = new HashMap<DTNHost, List<Integer>>();
+    private Map<DTNHost, List<Double>> bufferPerWaktu = new HashMap<DTNHost, List<Double>>();
     private int updateCounter = 0;  //new added
     private String print;  //new added
 
@@ -124,9 +124,9 @@ public class BufferNodeTiapWaktuReport extends Report implements UpdateListener 
      */
     @Override
     public void done() {
-        for (Map.Entry<DTNHost, List<Integer>> entry : bufferPerWaktu.entrySet()) {
+        for (Map.Entry<DTNHost, List<Double>> entry : bufferPerWaktu.entrySet()) {
             DTNHost key = entry.getKey();
-            List<Integer> value = entry.getValue();
+            List<Double> value = entry.getValue();
 //            System.out.println(key + " " + value);
             write(key + " " + value);
 

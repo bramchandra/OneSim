@@ -30,7 +30,7 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
 
     public static final String NODE_ID = "ToNodeID";
     private int nodeAddress;
-    private Map<DTNHost, List<Integer>> bufferData;
+    private Map<DTNHost, List<Double>> bufferData;
     private Map<DTNHost, Double> avgBuffer;
     private Double max;
     private Double min;
@@ -60,7 +60,7 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
                 continue;
             }
             BufferDetectionEngine cd = (BufferDetectionEngine) de;
-            Map<DTNHost, List<Integer>> nodeComm = cd.getBufferMap();
+            Map<DTNHost, List<Double>> nodeComm = cd.getBufferMap();
 
             if (host.getAddress() == nodeAddress) {
                 bufferData = nodeComm;
@@ -69,12 +69,12 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
 
         }
 
-//        for (DTNHost node : nodes) {
-//            if (bufferData.containsKey(node)) {
-//                double avg = avgBufferCalc(bufferData.get(node));
-//                avgBuffer.put(node, avg);
-//            }
-//        }
+        for (DTNHost node : nodes) {
+            if (bufferData.containsKey(node)) {
+                double avg = avgBufferCalc(bufferData.get(node));
+                avgBuffer.put(node, avg);
+            }
+        }
 //        double values = 0;
 //        for (Double avgEncounter : avgBuffer.values()) {
 //            values += avgEncounter;
@@ -85,17 +85,17 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
 //        write("Buffer Time To " + nodeAddress);
 //        write("Nodes" + "\t" + "Buffer");
         
-        for (Map.Entry<DTNHost, List<Integer>> entry : bufferData.entrySet()) {
+        for (Map.Entry<DTNHost, Double> entry : avgBuffer.entrySet()) {
             DTNHost key = entry.getKey();
-            List<Integer> value = entry.getValue();            
-            String print = "";
-            for (Integer double1 : value) {
-             
-                print = print + "\n" + double1;
-            }
+            Double value = entry.getValue();            
+//            String print = "";
+//            for (Double double1 : value) {
+//             
+//                print = print + "\n" + double1;
+//            }
 //            System.out.println(print);
-            write(print);
-//            write("\n"+value);
+//            write(print);
+            write("\n"+value);
 
         }
 //        write("Average Buffer  = " + avgValues);
@@ -124,15 +124,15 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
 //        }
 //    }
 
-    private double avgBufferCalc(List<Integer> bufferList) {
-        Iterator<Integer> i = bufferList.iterator();
+    private double avgBufferCalc(List<Double> bufferList) {
+        Iterator<Double> i = bufferList.iterator();
         double jumlah = 0;
         while (i.hasNext()) {
-            Integer d = i.next();
+            Double d = i.next();
             jumlah += d;
         }
 
         double avgDuration = jumlah / bufferList.size();
-        return avgDuration;
+        return Math.round(avgDuration*100.0)/100.0;
     }
 }

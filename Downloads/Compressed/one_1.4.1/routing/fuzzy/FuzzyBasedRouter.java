@@ -36,7 +36,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
     public static final String VARIANCE = "variance";
     public static final String TRANSFER_OF_UTILITY = "hasil";
     public Map<DTNHost, List<Double>> varianceMap;
-    public Map<DTNHost, List<Integer>> bufferMap;
+    public Map<DTNHost, List<Double>> bufferMap;
     public DTNHost thisBuffer;
     private FIS fcl;
     protected Map<DTNHost, Double> startTimestamps;
@@ -52,15 +52,14 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
         varianceMap = new HashMap<DTNHost, List<Double>>();
-        bufferMap = new HashMap<DTNHost, List<Integer>>();
-
+        bufferMap = new HashMap<DTNHost, List<Double>>();
 
     }
 
     @Override
     public void connectionUp(DTNHost thisHost, DTNHost peer) {
         // Find or create the connection history list
-        thisBuffer=thisHost;
+        thisBuffer = thisHost;
         double getLastDisconnect = 0;
         if (startTimestamps.containsKey(peer)) {
             getLastDisconnect = startTimestamps.get(peer);
@@ -121,13 +120,13 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Integer me = thisBuffer.getRouter().getFreeBufferSize();
-        Integer peer = otherHost.getRouter().getFreeBufferSize();
+        Double me = getNormalizedFreeBuffer(thisBuffer);
+        Double peer = getNormalizedFreeBuffer(otherHost);
 //        Double me = this.getNormalizedVarianceOfNodes(dest);
 //        Double peer = de.getNormalizedVarianceOfNodes(dest);
-        List<Integer> history;
+        List<Double> history;
         if (!bufferMap.containsKey(otherHost)) {
-            history = new LinkedList<Integer>();
+            history = new LinkedList<Double>();
 
         } else {
             history = bufferMap.get(otherHost);
@@ -135,6 +134,16 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         history.add(me);
         bufferMap.put(otherHost, history);
         return me < peer;
+    }
+
+    private Double getNormalizedFreeBuffer(DTNHost buffer) {
+        double max = 9711936;
+        double min = 24;
+        double x = buffer.getRouter().getFreeBufferSize();
+        double normalized = (x - min) / (max - min);
+
+        return normalized;
+
     }
 
     private double DefuzzificationSimilarity(DTNHost nodes) {
@@ -210,8 +219,8 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 
         Double c = Math.exp(-(Math.pow(rataShortestSeparation, 2) / (2 * variansi)));
 //        System.out.println(c);
-        if(c.isNaN()){
-            c=0.0;
+        if (c.isNaN()) {
+            c = 0.0;
         }
         return c;
     }
@@ -250,8 +259,9 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         return (FuzzyBasedRouter) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
 //FOR REPORT PURPOSE
+
     @Override
-    public Map<DTNHost, List<Integer>> getBufferMap() {
+    public Map<DTNHost, List<Double>> getBufferMap() {
         return bufferMap;
     }
 //    @Override
