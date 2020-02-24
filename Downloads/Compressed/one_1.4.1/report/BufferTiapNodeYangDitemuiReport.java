@@ -133,6 +133,6 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
         }
 
         double avgDuration = jumlah / bufferList.size();
-        return Math.round(avgDuration*100.0)/100.0;
+        return Math.round(avgDuration*1000.0)/1000.0;
     }
 }
