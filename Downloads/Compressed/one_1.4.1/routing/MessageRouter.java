@@ -141,6 +141,7 @@ public abstract class MessageRouter {
             this.msgTtl = s.getInt(MSG_TTL_S);
         }
         if (s.contains(SEND_QUEUE_MODE_S)) {
+            System.out.println(s.getInt(SEND_QUEUE_MODE_S));
             this.sendQueueMode = s.getInt(SEND_QUEUE_MODE_S);
             if (sendQueueMode < 1 || sendQueueMode > 6) {
                 throw new SettingsError("Invalid value for "
@@ -534,11 +535,14 @@ public abstract class MessageRouter {
     @SuppressWarnings(value = "unchecked")
     /* ugly way to make this generic */
     protected List sortByQueueMode(List list) {
+        System.out.println("HALO");
         switch (sendQueueMode) {
             case Q_MODE_RANDOM:
+                System.out.println("Random");
                 Collections.shuffle(list, new Random(SimClock.getIntTime()));
                 break;
             case Q_MODE_FIFO:
+                System.out.println("FIFO");
                 Collections.sort(list,
                         new Comparator() {
                     /**
@@ -568,14 +572,15 @@ public abstract class MessageRouter {
                 });
                 break;
             /* add more queue modes here */
-            case Q_MODE_MOFO:
+            case Q_MODE_MOFO:              
+                
                 Collections.sort(list,
                         new Comparator() {
                     /**
                      * Compares two tuples by their messages' receiving time
                      */
                     public int compare(Object o1, Object o2) {
-                        double diff;
+                        double diff;                        
                         Message m1, m2;
 
                         if (o1 instanceof Tuple) { //ol mengandung tuple ngga?
@@ -598,6 +603,7 @@ public abstract class MessageRouter {
                 });
                 break;
             case Q_MODE_MOPR:
+                System.out.println("MOPR");
                 Collections.sort(list,
                         new Comparator() {
                     /**
@@ -671,6 +677,7 @@ public abstract class MessageRouter {
                 });
                 break;
             case Q_MODE_SHLI:
+                System.out.println("SHLI");
                 Collections.sort(list,
                         new Comparator() {
                     /**
@@ -701,6 +708,7 @@ public abstract class MessageRouter {
                 System.out.println("shli");
                 break;
             case Q_MODE_LEPR:
+                System.out.println("LEPR");
                 Collections.sort(list,
                         new Comparator() {
                     /**
@@ -733,8 +741,7 @@ public abstract class MessageRouter {
                     public int compare(Object t, Object t1) {
                         return 0;
                     }
-                });
-                System.out.println("LEPR");
+                });          
                 break;
             default:
                 throw new SimError("Unknown queue mode " + sendQueueMode);
@@ -756,7 +763,9 @@ public abstract class MessageRouter {
         switch (sendQueueMode) {
             case Q_MODE_RANDOM:
                 /* return randomly (enough) but consistently -1, 0 or 1 */
+                System.out.println("HALO");
                 return (m1.hashCode() / 2 + m2.hashCode() / 2) % 3 - 1;
+                
             case Q_MODE_FIFO:
                 double diff = m1.getReceiveTime() - m2.getReceiveTime();
                 if (diff == 0) {
@@ -768,7 +777,8 @@ public abstract class MessageRouter {
                 double diff_mofo = m1.getHopCount() - m2.getHopCount();
                 if (diff_mofo == 0) {
                     return 0;
-                }
+                }          
+                System.out.println(diff_mofo);
                 return (diff_mofo < 0 ? -1 : 1);
 
             case Q_MODE_SHLI:
