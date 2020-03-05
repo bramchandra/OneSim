@@ -48,7 +48,7 @@ Group.interface1 = btInterface
 Group.speed = 0.5, 1.5
 # Message TTL of 300 minutes (5 hours)
 Group.msgTtl = 4320 
-Group.sendQueue = 3 
+Group.sendQueue = 1 
 # RANDOM = 1 V
 # FIFO = 2 V
 # MOFO = 3 V
@@ -94,8 +94,8 @@ Report.nrofReports = 1
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
 # Report.reportDir = reports/FuzzyFix/PDF/Variansi/Haggle
-# Report.reportDir = reports/FuzzyFix/PDF/Buffer/Haggle/ratarata/SHLI
-Report.reportDir = reports/COBA/MOFO
+Report.reportDir = reports/FuzzyFix/PDF/Buffer/Haggle/ratarata/Random
+# Report.reportDir = reports/COBA/MOFO
 # Report classes to load
 # Report.report1 = VarianceTiapNodeYangDitemuiReport
 Report.report1 = BufferTiapNodeYangDitemuiReport
