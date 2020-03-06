@@ -55,7 +55,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         connHistory = new HashMap<DTNHost, List<Duration>>();
 //        varianceMap = new HashMap<DTNHost, List<Double>>();
         bufferMap = new HashMap<DTNHost, List<Double>>();
-  
 
     }
 
@@ -119,11 +118,11 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         if (m.getTo() == otherHost) {
 
             return true;
-        }        
+        }
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Double me = getResidualBuffer(thisBuffer);
-        Double peer = getResidualBuffer(otherHost);
+        Double me = getPercepatanBuffer(thisBuffer);
+        Double peer = getPercepatanBuffer(otherHost);
 //        Double me = this.getNormalizedVarianceOfNodes(dest);
 //        Double peer = de.getNormalizedVarianceOfNodes(dest);
         List<Double> history;
@@ -139,21 +138,36 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         bufferMap.put(otherHost, history);
         return me > peer;
     }
-    
+
     private Double getResidualBuffer(DTNHost buffer) {
-//        double max = 9711936;
-//        double min = 24;
-        
+        //semakin besar semakin penuh
         Double initialBuffer = Double.valueOf(buffer.getRouter().getBufferSize());
         Double x = initialBuffer - Double.valueOf(buffer.getRouter().getFreeBufferSize());
-       
-        Double residualBuffer = x/initialBuffer;
-
+        Double residualBuffer = x / initialBuffer;
         return residualBuffer;
-
     }
 
-   
+    private Double getKecepatanBuffer(DTNHost h) {
+        Double K = 10.0;
+        Double epsilon = Math.pow(10, -3);
+        Double buffer = Double.valueOf(h.getRouter().getFreeBufferSize());
+        Double maxBuffer = Double.valueOf(h.getRouter().getBufferSize());
+        Double pow = Math.exp(Math.log(epsilon) * buffer / maxBuffer);
+        Double kecepatan = ((K * Math.log(epsilon)) / maxBuffer) * pow;
+//        System.out.println(kecepatan);
+        return kecepatan;
+    }
+
+    private Double getPercepatanBuffer(DTNHost h) {
+        Double K = 10.0;
+        Double epsilon = Math.pow(10, -3);
+        Double buffer = Double.valueOf(h.getRouter().getFreeBufferSize());
+        Double maxBuffer = Double.valueOf(h.getRouter().getBufferSize());
+        Double pow = (Math.log(epsilon) * buffer) / maxBuffer;
+        Double a = (Math.log(epsilon)) / maxBuffer;
+        Double percepatan = (K * Math.pow(a, 2)) * Math.exp(pow);
+        return percepatan;
+    }
 
     private double DefuzzificationSimilarity(DTNHost nodes) {
         double closenessValue = getClosenessOfNodes(nodes);
@@ -170,12 +184,12 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
     }
 
     private double Defuzzificationbuffer(DTNHost nodes) {
-        double closenessValue = getClosenessOfNodes(nodes);
-        double varianceValue = getNormalizedVarianceOfNodes(nodes);
+        double residualBufferValue = getResidualBuffer(nodes);
+//        double varianceValue = getNormalizedVarianceOfNodes(nodes);
         FunctionBlock functionBlock = fcl.getFunctionBlock(null);
 
-        functionBlock.setVariable(CLOSENESS, closenessValue);
-        functionBlock.setVariable(VARIANCE, varianceValue);
+        functionBlock.setVariable(CLOSENESS, residualBufferValue);
+//        functionBlock.setVariable(VARIANCE, varianceValue);
         functionBlock.evaluate();
 
         Variable tou = functionBlock.getVariable(TRANSFER_OF_UTILITY);

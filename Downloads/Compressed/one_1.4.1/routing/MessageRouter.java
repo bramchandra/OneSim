@@ -141,7 +141,7 @@ public abstract class MessageRouter {
             this.msgTtl = s.getInt(MSG_TTL_S);
         }
         if (s.contains(SEND_QUEUE_MODE_S)) {
-            System.out.println(s.getInt(SEND_QUEUE_MODE_S));
+//            System.out.println(s.getInt(SEND_QUEUE_MODE_S));
             this.sendQueueMode = s.getInt(SEND_QUEUE_MODE_S);
             if (sendQueueMode < 1 || sendQueueMode > 6) {
                 throw new SettingsError("Invalid value for "
