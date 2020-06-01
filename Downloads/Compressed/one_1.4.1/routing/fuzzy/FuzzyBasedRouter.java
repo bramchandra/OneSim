@@ -121,10 +121,9 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         }
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Double me = getPercepatanBuffer(thisBuffer);
-        Double peer = getPercepatanBuffer(otherHost);
-//        Double me = this.getNormalizedVarianceOfNodes(dest);
-//        Double peer = de.getNormalizedVarianceOfNodes(dest);
+        Double me = getKecepatanBuffer(thisBuffer);
+        Double peer = getKecepatanBuffer(otherHost);
+
         List<Double> history;
         if (!bufferMap.containsKey(otherHost)) {
             history = new LinkedList<Double>();
@@ -132,8 +131,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         } else {
             history = bufferMap.get(otherHost);
         }
-//        System.out.println(me);
-//        System.out.println(peer);
+
         history.add(me);
         bufferMap.put(otherHost, history);
         return me > peer;
@@ -227,6 +225,16 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         return d;
     }
 
+//    public List<Double> getListBuffer(DTNHost nodes) {
+//        List<Double> d = new LinkedList<>();
+//        if (connHistory.containsKey(nodes)) {
+//            
+//            connHistory.
+//            return nodes.getRouter().getFreeBufferSize();
+//        } else {           
+//            return d;
+//        }
+//    }
     public List<Duration> getListDuration(DTNHost nodes) {
         if (connHistory.containsKey(nodes)) {
             return connHistory.get(nodes);

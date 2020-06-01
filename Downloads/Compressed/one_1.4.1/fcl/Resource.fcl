@@ -11,9 +11,9 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY residualBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := gbell 0.5701 11.1 1.39e-17 ; 
-	TERM medium:= gbell 0.13 3.28 0.753;
-	TERM high:= gbell 0.09127 3.28 1;
+	TERM low := trian -0.4 0 0.4; 
+	TERM medium:= trian 0.1 0.5 0.9;
+	TERM high:= trian 0.6 1 1.4;
 END_FUZZIFY
 
 FUZZIFY variance			// Fuzzify input variable 'food': { 'rancid', 'delicious' }

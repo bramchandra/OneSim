@@ -11,21 +11,21 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY closeness			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := gbell 0.5701 11.1 1.39e-17 ; 
-	TERM medium:= gbell 0.13 3.28 0.753;
-	TERM high:= gbell 0.09127 3.28 1;
+	TERM low := trian -0.4 0 0.4; 
+	TERM medium:= trian 0.1 0.5 0.9;
+	TERM high:= trian 0.6 1 1.4;
 END_FUZZIFY
 
 FUZZIFY variance			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-	TERM low := gbell 0.2632 3.28 6.94e-18 ; 
-	TERM medium:= gbell 0.1366 5.07 0.466;
-	TERM high:= gbell 0.3611 5.32 1;
+	TERM low := trian -0.4 0 0.4; 
+	TERM medium:= trian 0.1 0.5 0.9;
+	TERM high:= trian 0.6 1 1.4;
 END_FUZZIFY
 
 DEFUZZIFY hasil			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-	TERM low := gbell 0.2 2.5 6.939e-18;
-	TERM medium := gbell 0.2 2.5 0.5;
-	TERM high := gbell 0.2 2.5 1;
+	TERM low := trian -0.4 0 0.4;
+	TERM medium := trian 0.1 0.5 0.9;
+	TERM high := trian 0.6 1 1.4;
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
