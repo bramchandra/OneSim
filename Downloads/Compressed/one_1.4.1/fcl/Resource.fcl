@@ -11,21 +11,21 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY residualBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := trian -0.4 0 0.4; 
-	TERM medium:= trian 0.1 0.5 0.9;
-	TERM high:= trian 0.6 1 1.4;
+	TERM low := trian -0.4 0 1; 
+	TERM medium:= trian 0 0.5 1;
+	TERM high:= trian 0 1 1.4;
 END_FUZZIFY
 
 FUZZIFY varianceBuffer			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-	TERM low := trian -0.4 0 0.4; 
-	TERM medium:= trian 0.1 0.5 0.9;
-	TERM high:= trian 0.6 1 1.4;
+	TERM low := trian -0.4 0 1; 
+	TERM medium:= trian 0 0.5 1;
+	TERM high:= trian 0 1 1.4;
 END_FUZZIFY
 
 DEFUZZIFY hasil			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-	TERM low := trian -0.4 0 0.4; 
-	TERM medium:= trian 0.1 0.5 0.9;
-	TERM high:= trian 0.6 1 1.4;
+	TERM low := trian -0.4 0 1; 
+	TERM medium:= trian 0 0.5 1;
+	TERM high:= trian 0 1 1.4;
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -35,15 +35,15 @@ RULEBLOCK No1
 	ACT : MIN;			// Use 'min' activation method
 	ACCU : MAX;			// Use 'max' accumulation method
         
-        RULE 1 : IF closeness IS low AND variance IS high THEN hasil IS low;
-        RULE 2 : IF closeness IS low AND variance IS medium THEN hasil IS low;
-        RULE 3 : IF closeness IS low AND variance IS low THEN hasil IS medium;
-        RULE 4 : IF closeness IS medium AND variance IS high THEN hasil IS low;
-        RULE 5 : IF closeness IS medium OR variance IS medium THEN hasil IS medium;
-        RULE 6 : IF closeness IS medium OR variance IS low THEN hasil IS medium;
-        RULE 7 : IF closeness IS high OR variance IS high THEN hasil IS medium;
-        RULE 8 : IF closeness IS high OR variance IS medium THEN hasil IS high;
-        RULE 9 : IF closeness IS high OR variance IS low THEN hasil IS high;
+        RULE 1 : IF residualBuffer IS high AND varianceBuffer IS high THEN hasil IS low;
+        RULE 2 : IF residualBuffer IS high AND varianceBuffer IS medium THEN hasil IS low;
+        RULE 3 : IF residualBuffer IS high AND varianceBuffer IS low THEN hasil IS medium;
+        RULE 4 : IF residualBuffer IS medium AND varianceBuffer IS high THEN hasil IS low;
+        RULE 5 : IF residualBuffer IS medium OR varianceBuffer IS medium THEN hasil IS medium;
+        RULE 6 : IF residualBuffer IS medium OR varianceBuffer IS low THEN hasil IS medium;
+        RULE 7 : IF residualBuffer IS low OR varianceBuffer IS high THEN hasil IS medium;
+        RULE 8 : IF residualBuffer IS low OR varianceBuffer IS medium THEN hasil IS high;
+        RULE 9 : IF residualBuffer IS low OR varianceBuffer IS low THEN hasil IS high;
 	
 END_RULEBLOCK
 

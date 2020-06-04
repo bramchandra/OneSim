@@ -33,27 +33,39 @@ import routing.community.VarianceDetectionEngine;
  */
 public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionEngine {
 
-//    public static final String FCL_NAMES = "fcl";
+    public static final String FCL_NAMES_Similarity = "fclSimilarity";
+    public static final String FCL_NAMES_Resource = "fclResource";
+    public static final String FCL_NAMES_Final = "fclFinal";
     public static final String CLOSENESS = "closeness";
     public static final String VARIANCE = "variance";
     public static final String RESIDUALBUFFER = "residualBuffer";
     public static final String VARIANCEBUFFER = "varianceBuffer";
+    public static final String FUZZYBUFFER = "fuzzyBuffer";
+    public static final String FUZZYSIMILARITY = "fuzzySimilarity";
     public static final String TRANSFER_OF_UTILITY = "hasil";
 //    public Map<DTNHost, List<Double>> varianceMap;
     public Map<DTNHost, List<Double>> bufferMap;
     public DTNHost thisBuffer;
-    private FIS fcl;
+    private FIS fclSimilarity;
+    private FIS fclResource;
+    private FIS fclFinal;
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, List<Duration>> connHistory;
     protected Map<DTNHost, List<Integer>> connBuffHistory;
 
     public FuzzyBasedRouter(Settings s) {
-//        String fclString = s.getSetting(FCL_NAMES);
-//        fcl = FIS.load(fclString);
+        String fclStringSimilarity = s.getSetting(FCL_NAMES_Similarity);
+        String fclStringResource = s.getSetting(FCL_NAMES_Resource);
+        String fclString = s.getSetting(FCL_NAMES_Final);
+        fclSimilarity = FIS.load(fclStringSimilarity);
+        fclResource = FIS.load(fclStringResource);
+        fclFinal = FIS.load(fclString);
     }
 
     public FuzzyBasedRouter(FuzzyBasedRouter t) {
-//        this.fcl = t.fcl;
+        this.fclSimilarity = t.fclSimilarity;
+        this.fclResource = t.fclResource;
+        this.fclFinal = t.fclFinal;
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
         connBuffHistory = new HashMap<DTNHost, List<Integer>>();
@@ -137,19 +149,21 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         }
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Double me = this.getNormalizedVarianceBufferOfNodes(dest);
-        Double peer = de.getNormalizedVarianceBufferOfNodes(dest);
+//        Double me = this.getNormalizedVarianceBufferOfNodes(dest);
+//        Double peer = de.getNormalizedVarianceBufferOfNodes(dest);
+        Double me = this.DefuzzificationFinal(dest);
+        Double peer = de.DefuzzificationFinal(dest);
 
-        List<Double> history;
-        if (!bufferMap.containsKey(otherHost)) {
-            history = new LinkedList<Double>();
-
-        } else {
-            history = bufferMap.get(otherHost);
-        }
-//        System.out.println(me + "\t" + peer);
-        history.add(me);
-        bufferMap.put(otherHost, history);
+//        List<Double> history;
+//        if (!bufferMap.containsKey(otherHost)) {
+//            history = new LinkedList<Double>();
+//
+//        } else {
+//            history = bufferMap.get(otherHost);
+//        }
+////        System.out.println(me + "\t" + peer);
+//        history.add(me);
+//        bufferMap.put(otherHost, history);
         return me > peer;
     }
 
@@ -186,7 +200,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
     private double DefuzzificationSimilarity(DTNHost nodes) {
         double closenessValue = getClosenessOfNodes(nodes);
         double varianceValue = getNormalizedVarianceOfNodes(nodes);
-        FunctionBlock functionBlock = fcl.getFunctionBlock(null);
+        FunctionBlock functionBlock = fclSimilarity.getFunctionBlock(null);
 
         functionBlock.setVariable(CLOSENESS, closenessValue);
         functionBlock.setVariable(VARIANCE, varianceValue);
@@ -200,10 +214,23 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
     private double Defuzzificationbuffer(DTNHost nodes) {
         double residualBufferValue = getResidualBuffer(nodes);
         double varianceValue = getNormalizedVarianceBufferOfNodes(nodes);
-        FunctionBlock functionBlock = fcl.getFunctionBlock(null);
+        FunctionBlock functionBlock = fclResource.getFunctionBlock(null);
 
         functionBlock.setVariable(RESIDUALBUFFER, residualBufferValue);
         functionBlock.setVariable(VARIANCEBUFFER, varianceValue);
+        functionBlock.evaluate();
+
+        Variable tou = functionBlock.getVariable(TRANSFER_OF_UTILITY);
+
+        return tou.getValue();
+    }
+    private double DefuzzificationFinal(DTNHost nodes) {
+        double similarity = DefuzzificationSimilarity(nodes);
+        double buffer = Defuzzificationbuffer(nodes);
+        FunctionBlock functionBlock = fclFinal.getFunctionBlock(null);
+
+        functionBlock.setVariable(FUZZYSIMILARITY, similarity);
+        functionBlock.setVariable(FUZZYBUFFER, buffer);
         functionBlock.evaluate();
 
         Variable tou = functionBlock.getVariable(TRANSFER_OF_UTILITY);
@@ -254,7 +281,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         double pembilang = k * (Math.pow(N, 2) - sigmf);
         double penyebut = Math.pow(N, 2) * (k - 1);
         Double d = pembilang / penyebut;
-        System.out.println(pembilang+"/"+penyebut+"="+d);
+//        System.out.println(pembilang+"/"+penyebut+"="+d);
 //        if (d.isNaN()) {
 //            d = 0.0;
 //        }

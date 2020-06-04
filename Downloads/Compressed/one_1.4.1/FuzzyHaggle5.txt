@@ -3,8 +3,8 @@
 #
 
 ## Scenario settings
-# Scenario.name = HaggleInfocom5-FuzzyBasedRouter
-Scenario.name = COBA BUFFER
+Scenario.name = HaggleInfocom5-FuzzyBasedRouter
+# Scenario.name = COBA SIMILARITY
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
 # 43200s == 12h
@@ -39,7 +39,9 @@ Group.movementModel = StationaryMovement
 Group.router = DecisionEngineRouter
 # DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
 DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
-DecisionEngineRouter.fcl = fcl/FuzzyControlLanguage.fcl
+DecisionEngineRouter.fclFinal = fcl/Fuzzy.fcl
+DecisionEngineRouter.fclSimilarity = fcl/Similarity.fcl
+DecisionEngineRouter.fclResource = fcl/Resource.fcl
 Group.bufferSize = 10M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
@@ -89,9 +91,9 @@ Report.nrofReports = 1
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
 # Report.reportDir = reports/FuzzyFix/HaggleInfocomFix
-Report.reportDir = reports/COBA
+Report.reportDir = reports/COBA/fuzzyFinal
 # Report classes to load
-Report.report1 = BufferNodeTiapWaktuReport
+Report.report1 = TotalNumberOfFowardPerContactReport
 # Report.report1 = LatencyPerContactReport
 # Report.report2 = PercentageMessageDeliveredPerContactReport
 # Report.report3 = OverheadPerContactReport
