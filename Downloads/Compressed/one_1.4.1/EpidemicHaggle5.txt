@@ -3,7 +3,7 @@
 #
 
 ## Scenario settings
-Scenario.name = HaggleInfocom5-EpidemicRouter
+Scenario.name = HaggleInfocom5-ProphetRouter2
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
 # 43200s == 12h
@@ -36,7 +36,7 @@ Scenario.nrofHostGroups = 1
 # Common settings for all groups
 Group.movementModel = StationaryMovement
 Group.router = DecisionEngineRouter
-DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
+DecisionEngineRouter.decisionEngine = ProphetDecisionEngine
 # DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
 # DecisionEngineRouter.fcl = fcl/FuzzyControlLanguage.fcl
 Group.bufferSize = 20M

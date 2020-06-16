@@ -535,10 +535,10 @@ public abstract class MessageRouter {
     @SuppressWarnings(value = "unchecked")
     /* ugly way to make this generic */
     protected List sortByQueueMode(List list) {
-        System.out.println("HALO");
+//        System.out.println("HALO");
         switch (sendQueueMode) {
             case Q_MODE_RANDOM:
-                System.out.println("Random");
+//                System.out.println("Random");
                 Collections.shuffle(list, new Random(SimClock.getIntTime()));
                 break;
             case Q_MODE_FIFO:
@@ -763,7 +763,7 @@ public abstract class MessageRouter {
         switch (sendQueueMode) {
             case Q_MODE_RANDOM:
                 /* return randomly (enough) but consistently -1, 0 or 1 */
-                System.out.println("HALO");
+//                System.out.println("HALO");
                 return (m1.hashCode() / 2 + m2.hashCode() / 2) % 3 - 1;
                 
             case Q_MODE_FIFO:
