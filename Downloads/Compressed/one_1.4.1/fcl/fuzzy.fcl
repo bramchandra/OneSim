@@ -39,11 +39,11 @@ RULEBLOCK No1
         RULE 2 : IF fuzzyBuffer IS low AND fuzzySimilarity IS medium THEN hasil IS low;
         RULE 3 : IF fuzzyBuffer IS low AND fuzzySimilarity IS high THEN hasil IS medium;
         RULE 4 : IF fuzzyBuffer IS medium AND fuzzySimilarity IS low THEN hasil IS low;
-        RULE 5 : IF fuzzyBuffer IS medium OR fuzzySimilarity IS medium THEN hasil IS medium;
-        RULE 6 : IF fuzzyBuffer IS medium OR fuzzySimilarity IS high THEN hasil IS medium;
-        RULE 7 : IF fuzzyBuffer IS high OR fuzzySimilarity IS low THEN hasil IS medium;
-        RULE 8 : IF fuzzyBuffer IS high OR fuzzySimilarity IS medium THEN hasil IS high;
-        RULE 9 : IF fuzzyBuffer IS high OR fuzzySimilarity IS high THEN hasil IS high;
+        RULE 5 : IF fuzzyBuffer IS medium AND fuzzySimilarity IS medium THEN hasil IS medium;
+        RULE 6 : IF fuzzyBuffer IS medium AND fuzzySimilarity IS high THEN hasil IS medium;
+        RULE 7 : IF fuzzyBuffer IS high AND fuzzySimilarity IS low THEN hasil IS medium;
+        RULE 8 : IF fuzzyBuffer IS high AND fuzzySimilarity IS medium THEN hasil IS high;
+        RULE 9 : IF fuzzyBuffer IS high AND fuzzySimilarity IS high THEN hasil IS high;
 	
 END_RULEBLOCK
 

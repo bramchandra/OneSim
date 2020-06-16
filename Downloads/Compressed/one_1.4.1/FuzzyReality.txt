@@ -83,7 +83,7 @@ MovementModel.worldSize = 100, 100
 MovementModel.warmup = 1000
 
 # how many reports to load
-Report.nrofReports = 3
+Report.nrofReports = 4
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
@@ -92,4 +92,5 @@ Report.reportDir = reports/FuzzyFix/Reality
 Report.report1 = LatencyPerContactReport
 Report.report2 = PercentageMessageDeliveredPerContactReport
 Report.report3 = OverheadPerContactReport
+Report.report4 = TotalNumberOfFowardPerContactReport
 # Report.closenessToNodeID = [0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40]

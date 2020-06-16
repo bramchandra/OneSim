@@ -39,11 +39,11 @@ RULEBLOCK No1
         RULE 2 : IF closeness IS low AND variance IS medium THEN hasil IS low;
         RULE 3 : IF closeness IS low AND variance IS low THEN hasil IS medium;
         RULE 4 : IF closeness IS medium AND variance IS high THEN hasil IS low;
-        RULE 5 : IF closeness IS medium OR variance IS medium THEN hasil IS medium;
-        RULE 6 : IF closeness IS medium OR variance IS low THEN hasil IS medium;
-        RULE 7 : IF closeness IS high OR variance IS high THEN hasil IS medium;
-        RULE 8 : IF closeness IS high OR variance IS medium THEN hasil IS high;
-        RULE 9 : IF closeness IS high OR variance IS low THEN hasil IS high;
+        RULE 5 : IF closeness IS medium AND variance IS medium THEN hasil IS medium;
+        RULE 6 : IF closeness IS medium AND variance IS low THEN hasil IS medium;
+        RULE 7 : IF closeness IS high AND variance IS high THEN hasil IS medium;
+        RULE 8 : IF closeness IS high AND variance IS medium THEN hasil IS high;
+        RULE 9 : IF closeness IS high AND variance IS low THEN hasil IS high;
 	
 END_RULEBLOCK
 

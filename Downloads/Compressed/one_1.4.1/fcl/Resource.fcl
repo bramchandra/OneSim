@@ -39,11 +39,11 @@ RULEBLOCK No1
         RULE 2 : IF residualBuffer IS high AND varianceBuffer IS medium THEN hasil IS low;
         RULE 3 : IF residualBuffer IS high AND varianceBuffer IS low THEN hasil IS medium;
         RULE 4 : IF residualBuffer IS medium AND varianceBuffer IS high THEN hasil IS low;
-        RULE 5 : IF residualBuffer IS medium OR varianceBuffer IS medium THEN hasil IS medium;
-        RULE 6 : IF residualBuffer IS medium OR varianceBuffer IS low THEN hasil IS medium;
-        RULE 7 : IF residualBuffer IS low OR varianceBuffer IS high THEN hasil IS medium;
-        RULE 8 : IF residualBuffer IS low OR varianceBuffer IS medium THEN hasil IS high;
-        RULE 9 : IF residualBuffer IS low OR varianceBuffer IS low THEN hasil IS high;
+        RULE 5 : IF residualBuffer IS medium AND varianceBuffer IS medium THEN hasil IS medium;
+        RULE 6 : IF residualBuffer IS medium AND varianceBuffer IS low THEN hasil IS medium;
+        RULE 7 : IF residualBuffer IS low AND varianceBuffer IS high THEN hasil IS medium;
+        RULE 8 : IF residualBuffer IS low AND varianceBuffer IS medium THEN hasil IS high;
+        RULE 9 : IF residualBuffer IS low AND varianceBuffer IS low THEN hasil IS high;
 	
 END_RULEBLOCK
 

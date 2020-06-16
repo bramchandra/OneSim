@@ -164,7 +164,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 ////        System.out.println(me + "\t" + peer);
 //        history.add(me);
 //        bufferMap.put(otherHost, history);
-        return me > peer;
+        return me < peer;
     }
 
     private Double getResidualBuffer(DTNHost buffer) {
