@@ -93,7 +93,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
             history = connHistory.get(peer);
 
         }
-        
+
         if (!connBuffHistory.containsKey(peer)) {
 
             Buffhistory = new LinkedList<Integer>();
@@ -151,9 +151,22 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
 //        Double me = this.getNormalizedVarianceBufferOfNodes(dest);
 //        Double peer = de.getNormalizedVarianceBufferOfNodes(dest);
-        Double me = this.getResidualBuffer(dest);
-        Double peer = de.getResidualBuffer(dest);
-
+        Double meResidual = this.getResidualBuffer(dest);
+        Double peerResidual = de.getResidualBuffer(dest);
+        double meVariance = this.getNormalizedVarianceBufferOfNodes(dest);
+        double peerVariance = de.getNormalizedVarianceBufferOfNodes(dest);
+        if (meResidual < peerResidual && meVariance < peerVariance) {
+            return false;
+        }
+        else if (meResidual > peerResidual && meVariance > peerVariance) {
+            return true;
+        }
+        else if (meResidual < peerResidual && meVariance > peerVariance) {
+            return true;
+        }
+        else if (meResidual > peerResidual && meVariance < peerVariance) {
+            return false;
+        }
 //        List<Double> history;
 //        if (!bufferMap.containsKey(otherHost)) {
 //            history = new LinkedList<Double>();
@@ -164,7 +177,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 ////        System.out.println(me + "\t" + peer);
 //        history.add(me);
 //        bufferMap.put(otherHost, history);
-        return me > peer;
+        return false;
     }
 
     private Double getResidualBuffer(DTNHost buffer) {
@@ -196,7 +209,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 //        Double percepatan = (K * Math.pow(a, 2)) * Math.exp(pow);
 //        return percepatan;
 //    }
-
     private double DefuzzificationSimilarity(DTNHost nodes) {
         double closenessValue = getClosenessOfNodes(nodes);
         double varianceValue = getNormalizedVarianceOfNodes(nodes);
@@ -224,6 +236,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 
         return tou.getValue();
     }
+
     private double DefuzzificationFinal(DTNHost nodes) {
         double similarity = DefuzzificationSimilarity(nodes);
         double buffer = Defuzzificationbuffer(nodes);
@@ -267,6 +280,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 //        }
         return d;
     }
+
     public double getNormalizedVarianceBufferOfNodes(DTNHost nodes) {
         double k = getListBuffer(nodes).size();
         double N = 0;

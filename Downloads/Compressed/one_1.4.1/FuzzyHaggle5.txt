@@ -3,7 +3,7 @@
 #
 
 ## Scenario settings
-Scenario.name = HaggleInfocom5-FuzzyBasedRouter
+Scenario.name = HaggleInfocom5-NonFuzzyBasedRouter
 # Scenario.name = COBA SIMILARITY
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
@@ -91,7 +91,7 @@ Report.nrofReports = 5
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
 # Report.reportDir = reports/FuzzyFix/HaggleInfocomFix
-Report.reportDir = reports/COBA/residualBuffer
+Report.reportDir = reports/COBA/nonFuzzy
 # Report classes to load
 
 
