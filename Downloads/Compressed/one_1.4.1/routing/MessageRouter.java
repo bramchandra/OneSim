@@ -161,7 +161,7 @@ public abstract class MessageRouter {
      * @param mListeners The message listeners
      */
     public void init(DTNHost host, List<MessageListener> mListeners) {
-        this.incomingMessages = new HashMap<String, Message>();
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");        this.incomingMessages = new HashMap<String, Message>();
         this.messages = new HashMap<String, Message>();
         this.deliveredMessages = new HashMap<String, Message>();
         this.mListeners = mListeners;

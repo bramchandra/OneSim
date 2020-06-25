@@ -3,7 +3,7 @@
 #
 
 ## Scenario settings
-Scenario.name = Reality-EpidemicRouter
+Scenario.name = Reality-ProphetRouter
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
 # 43200s == 12h
@@ -35,8 +35,9 @@ Scenario.nrofHostGroups = 1
 
 # Common settings for all groups
 Group.movementModel = StationaryMovement
-Group.router = DecisionEngineRouter
-DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
+Group.router = ProphetRouter
+ProphetRouter.secondsInTimeUnit = 30
+# DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
 # DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
 # DecisionEngineRouter.fcl = fcl/FuzzyControlLanguage.fcl
 Group.bufferSize = 20M
@@ -87,7 +88,7 @@ Report.nrofReports = 4
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/EpidemicFix/Reality
+Report.reportDir = reports/ProphetFix/Reality
 # Report classes to load
 Report.report1 = LatencyPerContactReport
 Report.report2 = PercentageMessageDeliveredPerContactReport

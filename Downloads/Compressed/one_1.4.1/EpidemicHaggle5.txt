@@ -3,7 +3,7 @@
 #
 
 ## Scenario settings
-Scenario.name = HaggleInfocom5-ProphetRouter2
+Scenario.name = HaggleInfocom5-ProphetRouter
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
 # 43200s == 12h
@@ -95,7 +95,7 @@ Report.nrofReports = 5
 # length of the warm up period (simulated seconds)
 Report.warmup = 5
 # default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/EpidemicFix/Haggle
+Report.reportDir = reports/ProphetFix/Haggle
 # Report classes to load
 
 Report.report1 = LatencyPerContactReport
