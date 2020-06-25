@@ -3,7 +3,8 @@
 #
 
 ## Scenario settings
-Scenario.name = HaggleInfocom5-NonFuzzyBasedRouter
+# Scenario.name = HaggleInfocom5-FuzzyBasedRouter
+Scenario.name = HaggleInfocom5-Epidemic
 # Scenario.name = COBA SIMILARITY
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
@@ -37,11 +38,11 @@ Scenario.nrofHostGroups = 1
 # Common settings for all groups
 Group.movementModel = StationaryMovement
 Group.router = DecisionEngineRouter
-# DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
-DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
+DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
+# DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
 # DecisionEngineRouter.fclFinal = fcl/Fuzzy.fcl
 # DecisionEngineRouter.fclSimilarity = fcl/Similarity.fcl
-DecisionEngineRouter.fclResource = fcl/Resource.fcl
+# DecisionEngineRouter.fclResource = fcl/Resource.fcl
 Group.bufferSize = 20M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
@@ -91,7 +92,8 @@ Report.nrofReports = 5
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
 # Report.reportDir = reports/FuzzyFix/HaggleInfocomFix
-Report.reportDir = reports/COBA/nonFuzzy
+# Report.reportDir = reports/COBA/fuzzyFinal
+Report.reportDir = reports/COBA/Epidemic
 # Report classes to load
 
 

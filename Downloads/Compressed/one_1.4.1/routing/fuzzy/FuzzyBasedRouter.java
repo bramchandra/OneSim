@@ -33,9 +33,9 @@ import routing.community.VarianceDetectionEngine;
  */
 public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionEngine {
 
-//    public static final String FCL_NAMES_Similarity = "fclSimilarity";
+    public static final String FCL_NAMES_Similarity = "fclSimilarity";
     public static final String FCL_NAMES_Resource = "fclResource";
-//    public static final String FCL_NAMES_Final = "fclFinal";
+    public static final String FCL_NAMES_Final = "fclFinal";
     public static final String CLOSENESS = "closeness";
     public static final String VARIANCE = "variance";
     public static final String RESIDUALBUFFER = "residualBuffer";
@@ -54,18 +54,18 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
     protected Map<DTNHost, List<Integer>> connBuffHistory;
 
     public FuzzyBasedRouter(Settings s) {
-//        String fclStringSimilarity = s.getSetting(FCL_NAMES_Similarity);
-//        String fclStringResource = s.getSetting(FCL_NAMES_Resource);
-//        String fclString = s.getSetting(FCL_NAMES_Final);
-//        fclSimilarity = FIS.load(fclStringSimilarity);
-//        fclResource = FIS.load(fclStringResource);
-//        fclFinal = FIS.load(fclString);
+        String fclStringSimilarity = s.getSetting(FCL_NAMES_Similarity);
+        String fclStringResource = s.getSetting(FCL_NAMES_Resource);
+        String fclString = s.getSetting(FCL_NAMES_Final);
+        fclSimilarity = FIS.load(fclStringSimilarity);
+        fclResource = FIS.load(fclStringResource);
+        fclFinal = FIS.load(fclString);
     }
 
     public FuzzyBasedRouter(FuzzyBasedRouter t) {
-//        this.fclSimilarity = t.fclSimilarity;
-//        this.fclResource = t.fclResource;
-//        this.fclFinal = t.fclFinal;
+        this.fclSimilarity = t.fclSimilarity;
+        this.fclResource = t.fclResource;
+        this.fclFinal = t.fclFinal;
         startTimestamps = new HashMap<DTNHost, Double>();
         connHistory = new HashMap<DTNHost, List<Duration>>();
         connBuffHistory = new HashMap<DTNHost, List<Integer>>();
@@ -149,24 +149,21 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         }
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-//        Double me = this.getNormalizedVarianceBufferOfNodes(dest);
-//        Double peer = de.getNormalizedVarianceBufferOfNodes(dest);
-        Double meResidual = this.getResidualBuffer(dest);
-        Double peerResidual = de.getResidualBuffer(dest);
-        double meVariance = this.getNormalizedVarianceBufferOfNodes(dest);
-        double peerVariance = de.getNormalizedVarianceBufferOfNodes(dest);
-        if (meResidual < peerResidual && meVariance < peerVariance) {
-            return false;
-        }
-        else if (meResidual > peerResidual && meVariance > peerVariance) {
-            return true;
-        }
-        else if (meResidual < peerResidual && meVariance > peerVariance) {
-            return true;
-        }
-        else if (meResidual > peerResidual && meVariance < peerVariance) {
-            return false;
-        }
+        Double me = this.DefuzzificationFinal(dest);
+        Double peer = de.DefuzzificationFinal(dest);
+//        Double meResidual = this.getResidualBuffer(dest);
+//        Double peerResidual = de.getResidualBuffer(dest);
+//        double meVariance = this.getNormalizedVarianceBufferOfNodes(dest);
+//        double peerVariance = de.getNormalizedVarianceBufferOfNodes(dest);
+//        if (meResidual < peerResidual && meVariance < peerVariance) {
+//            return false;
+//        } else if (meResidual > peerResidual && meVariance > peerVariance) {
+//            return true;
+//        } else if (meResidual < peerResidual && meVariance > peerVariance) {
+//            return true;
+//        } else if (meResidual > peerResidual && meVariance < peerVariance) {
+//            return false;
+//        }
 //        List<Double> history;
 //        if (!bufferMap.containsKey(otherHost)) {
 //            history = new LinkedList<Double>();
@@ -177,7 +174,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 ////        System.out.println(me + "\t" + peer);
 //        history.add(me);
 //        bufferMap.put(otherHost, history);
-        return false;
+        return me < peer;
     }
 
     private Double getResidualBuffer(DTNHost buffer) {
@@ -188,27 +185,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         return residualBuffer;
     }
 
-//    private Double getKecepatanBuffer(DTNHost h) {
-//        Double K = 10.0;
-//        Double epsilon = Math.pow(10, -3);
-//        Double buffer = Double.valueOf(h.getRouter().getFreeBufferSize());
-//        Double maxBuffer = Double.valueOf(h.getRouter().getBufferSize());
-//        Double pow = Math.exp(Math.log(epsilon) * buffer / maxBuffer);
-//        Double kecepatan = ((K * Math.log(epsilon)) / maxBuffer) * pow;
-////        System.out.println(kecepatan);
-//        return kecepatan;
-//    }
-//
-//    private Double getPercepatanBuffer(DTNHost h) {
-//        Double K = 10.0;
-//        Double epsilon = Math.pow(10, -3);
-//        Double buffer = Double.valueOf(h.getRouter().getFreeBufferSize());
-//        Double maxBuffer = Double.valueOf(h.getRouter().getBufferSize());
-//        Double pow = (Math.log(epsilon) * buffer) / maxBuffer;
-//        Double a = (Math.log(epsilon)) / maxBuffer;
-//        Double percepatan = (K * Math.pow(a, 2)) * Math.exp(pow);
-//        return percepatan;
-//    }
     private double DefuzzificationSimilarity(DTNHost nodes) {
         double closenessValue = getClosenessOfNodes(nodes);
         double varianceValue = getNormalizedVarianceOfNodes(nodes);
