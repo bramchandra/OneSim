@@ -149,8 +149,8 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         }
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Double me = this.DefuzzificationFinal(dest);
-        Double peer = de.DefuzzificationFinal(dest);
+        Double me = this.Defuzzificationbuffer(dest);
+        Double peer = de.Defuzzificationbuffer(dest);
 //        Double meResidual = this.getResidualBuffer(dest);
 //        Double peerResidual = de.getResidualBuffer(dest);
 //        double meVariance = this.getNormalizedVarianceBufferOfNodes(dest);
