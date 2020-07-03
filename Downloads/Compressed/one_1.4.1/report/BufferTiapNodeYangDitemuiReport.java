@@ -95,7 +95,7 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
 //            }
 //            System.out.println(print);
 //            write(print);
-            write(key+"\t"+value+"\n");
+            write(value+"");
 
         }
 //        write("Average Buffer  = " + avgValues);

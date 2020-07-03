@@ -2,7 +2,7 @@
 FUNCTION_BLOCK haggle3Infocom5	// Block definition (there may be more than one block per file)
 
 VAR_INPUT				// Define input variables
-	residualBuffer : REAL;
+	averageBuffer : REAL;
 	varianceBuffer : REAL;
 END_VAR
 
@@ -10,10 +10,10 @@ VAR_OUTPUT				// Define output variable
 	hasil : REAL;
 END_VAR
 
-FUZZIFY residualBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := trian -0.4 0 1; 
-	TERM medium:= trian 0 0.5 1;
-	TERM high:= trian 0 1 1.4;
+FUZZIFY averageBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM low := trian 3.853e+06 5.526e+06 9.709e+06; 
+	TERM medium:= trian 5.526e+06 7.618e+06 9.709e+06;
+	TERM high:= trian 5.526e+06 9.709e+06 1.138e+07;
 END_FUZZIFY
 
 FUZZIFY varianceBuffer			// Fuzzify input variable 'food': { 'rancid', 'delicious' }

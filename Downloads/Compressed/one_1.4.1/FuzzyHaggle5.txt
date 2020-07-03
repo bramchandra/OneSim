@@ -43,7 +43,7 @@ DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
 DecisionEngineRouter.fclFinal = fcl/Fuzzy.fcl
 DecisionEngineRouter.fclSimilarity = fcl/Similarity.fcl
 DecisionEngineRouter.fclResource = fcl/Resource.fcl
-Group.bufferSize = 20M
+Group.bufferSize = 10M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
 Group.nrofInterfaces = 1
@@ -51,7 +51,7 @@ Group.interface1 = btInterface
 # Walking speeds
 Group.speed = 0.5, 1.5
 # Message TTL of 300 minutes (5 hours)
-Group.msgTtl = 4320 
+Group.msgTtl = 360 
 
 # group1 (pedestrians) specific settings
 Group1.groupID = A
@@ -91,9 +91,9 @@ Report.nrofReports = 5
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzyFinal
-# Report.reportDir = reports/COBA/fuzzyFinal
-# Report.reportDir = reports/COBA/Epidemic
+Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzyFinal2
+# Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzyBuffer2
+# Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzySimilarity2
 # Report classes to load
 
 
