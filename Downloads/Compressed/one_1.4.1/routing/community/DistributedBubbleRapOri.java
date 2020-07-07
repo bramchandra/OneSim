@@ -258,4 +258,9 @@ public class DistributedBubbleRapOri
     public int[] ArrayGlobalCentrality() {
         return this.centrality.getGlobalArrayCentrality(connHistory);
     }
+
+    @Override
+    public void update(DTNHost thishost) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

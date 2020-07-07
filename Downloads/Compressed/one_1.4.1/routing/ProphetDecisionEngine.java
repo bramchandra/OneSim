@@ -183,4 +183,9 @@ public class ProphetDecisionEngine implements RoutingDecisionEngine {
 
         return de.getPredFor(m.getTo()) > this.getPredFor(m.getTo());
     }
+
+    @Override
+    public void update(DTNHost thishost) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

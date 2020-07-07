@@ -114,5 +114,6 @@ public interface RoutingDecisionEngine
 	 * 
 	 * @return
 	 */
+        public void update(DTNHost thishost);
 	public RoutingDecisionEngine replicate();
 }

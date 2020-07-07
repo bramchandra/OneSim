@@ -122,4 +122,9 @@ public class DecisionEngineSprayAndWaitRouter implements RoutingDecisionEngine {
     public RoutingDecisionEngine replicate() {
         return new DecisionEngineSprayAndWaitRouter(this);
     }
+
+    @Override
+    public void update(DTNHost thishost) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

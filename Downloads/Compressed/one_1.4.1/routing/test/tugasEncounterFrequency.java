@@ -138,4 +138,9 @@ public class tugasEncounterFrequency implements RoutingDecisionEngine,FrequencyD
     public Map<DTNHost, List<Duration>> getFrequency() {
         return this.connHistory;
     }
+
+    @Override
+    public void update(DTNHost thishost) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

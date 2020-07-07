@@ -155,4 +155,9 @@ public class tugasShortestSeparationPeriod implements RoutingDecisionEngine {
 
         return (tugasShortestSeparationPeriod) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
+
+    @Override
+    public void update(DTNHost thishost) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

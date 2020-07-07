@@ -426,7 +426,7 @@ public class DecisionEngineRouter extends ActiveRouter {
     @Override
     public void update() {
         super.update();
-
+        decider.update(getHost());
         if (!canStartTransfer() || isTransferring()) {
             return; // nothing to transfer or is currently transferring
         }

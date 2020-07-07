@@ -11,9 +11,9 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY averageBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := trian -5000000 0 5000000; 
-	TERM medium:= trian 0 5000000 10000000;
-	TERM high:= trian 5000000 10000000 15000000;
+	TERM low := trian 0 0 10000000; 
+	TERM medium:= trian 0 10000000 20000000;
+	TERM high:= trian 10000000 20000000 20000000;
 END_FUZZIFY
 
 FUZZIFY varianceBuffer			// Fuzzify input variable 'food': { 'rancid', 'delicious' }

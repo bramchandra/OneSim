@@ -3,8 +3,7 @@
 #
 
 ## Scenario settings
-Scenario.name = Reality-ProphetRouter
-# Scenario.name = Reality-EpidemicRouter
+Scenario.name = Node %%Report.ToNodeID%% -
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
 # 43200s == 12h
@@ -37,10 +36,13 @@ Scenario.nrofHostGroups = 1
 
 # Common settings for all groups
 Group.movementModel = StationaryMovement
-Group.router = ProphetRouter
-# Group.router = DecisionEngineRouter
-ProphetRouter.secondsInTimeUnit = 30
-# DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
+# Group.router = ProphetRouter
+Group.router = DecisionEngineRouter
+# ProphetRouter.secondsInTimeUnit = 30
+DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
+DecisionEngineRouter.fclFinal = fcl/Fuzzy.fcl
+DecisionEngineRouter.fclSimilarity = fcl/Similarity.fcl
+DecisionEngineRouter.fclResource = fcl/Resource.fcl
 Group.bufferSize = 20M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
@@ -85,17 +87,15 @@ MovementModel.worldSize = 100, 100
 MovementModel.warmup = 1000
 
 # how many reports to load
-Report.nrofReports = 6
+Report.nrofReports = 1
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/ProphetFix/Reality2
-# Report.reportDir = reports/EpidemicFix/Reality2
+# Report.reportDir = reports/FuzzyFix/PDF/Variansi/Haggle
+Report.reportDir = reports/COBA/PDF/Reality/ratarataBuffer
+# Report.reportDir = reports/COBA/MOFO
 # Report classes to load
-Report.report1 = LatencyPerContactReport
-Report.report2 = PercentageMessageDeliveredPerContactReport
-Report.report3 = OverheadPerContactReport
-Report.report4 = TotalNumberOfFowardPerContactReport
-Report.report5 = AverageNumberOfHopsPerMessagePerTimeReport
-Report.report6 = DropPerContactReport
-# Report.closenessToNodeID = [0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40]
+# Report.report1 = VarianceTiapNodeYangDitemuiReport
+Report.report1 = BufferTiapNodeYangDitemuiReport
+Report.ToNodeID = [0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40;41;42;43;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;65;66;67;68;69;70;71;72;73;74;75;76;77;78;79;80;81;82;83;84;85;86;87;88;89;90;91;92;93;94;95;96]
+
