@@ -92,7 +92,8 @@ Report.nrofReports = 6
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
 # Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzyFinal
-Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzyBuffer
+# Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzyBuffer
+Report.reportDir = reports/COBA/fuzzyBuffer
 # Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzySimilarity2
 # Report classes to load
 

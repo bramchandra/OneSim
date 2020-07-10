@@ -125,7 +125,7 @@ public class DecisionEngineRouter extends ActiveRouter {
         outgoingMessages = new LinkedList<Tuple<Message, Connection>>();
         decider = r.decider.replicate();
         tombstoning = r.tombstoning;
-  
+
         if (this.tombstoning) {
             tombstones = new HashSet<String>(10);
         }
@@ -426,18 +426,19 @@ public class DecisionEngineRouter extends ActiveRouter {
     @Override
     public void update() {
         super.update();
+
         decider.update(getHost());
         if (!canStartTransfer() || isTransferring()) {
             return; // nothing to transfer or is currently transferring
         }
-        
+
         tryMessagesForConnected(outgoingMessages);
 
         for (Iterator<Tuple<Message, Connection>> i = outgoingMessages.iterator();
                 i.hasNext();) {
-            Tuple<Message, Connection> t = i.next();            
+            Tuple<Message, Connection> t = i.next();
             if (!this.hasMessage(t.getKey().getId())) {
-                
+
                 i.remove();
             }
         }

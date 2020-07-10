@@ -108,12 +108,12 @@ public interface RoutingDecisionEngine
 	 * @return true if the message should be deleted. False otherwise.
 	 */
 	public boolean shouldDeleteOldMessage(Message m, DTNHost hostReportingOld);
-	
+	public void update(DTNHost thishost);
 	/**
 	 * Duplicates this decision engine.
 	 * 
 	 * @return
 	 */
-        public void update(DTNHost thishost);
+        
 	public RoutingDecisionEngine replicate();
 }

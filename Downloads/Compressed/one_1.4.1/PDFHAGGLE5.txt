@@ -91,7 +91,8 @@ Report.nrofReports = 1
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
 # Report.reportDir = reports/FuzzyFix/PDF/Variansi/Haggle
-Report.reportDir = reports/COBA/PDF/ratarataBuffer
+Report.reportDir = reports/COBA/PDF/variansiBuffer/Haggle
+Report.reportDir = reports/COBA/PDF/ratarataBuffer/Haggle
 # Report.reportDir = reports/COBA/MOFO
 # Report classes to load
 # Report.report1 = VarianceTiapNodeYangDitemuiReport
