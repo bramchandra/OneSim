@@ -91,10 +91,10 @@ Report.nrofReports = 1
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
-# Report.reportDir = reports/FuzzyFix/PDF/Variansi/Haggle
-# Report.reportDir = reports/COBA/PDF/normalisasivariansiBuffer/reality
-Report.reportDir = reports/COBA/PDF/ratarataBuffer/reality
-# Report.reportDir = reports/COBA/MOFO
+# Report.reportDir = reports/COBA/PDF/Variansi/Reality/melebihkecildaripeer
+Report.reportDir = reports/COBA/PDF/Closeness/Reality
+# Report.reportDir = reports/COBA/PDF/variansiBuffer/Reality
+# Report.reportDir = reports/COBA/PDF/ratarataBuffer/Reality/catatdisend
 # Report classes to load
 # Report.report1 = VarianceTiapNodeYangDitemuiReport
 Report.report1 = BufferTiapNodeYangDitemuiReport

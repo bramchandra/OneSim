@@ -81,6 +81,7 @@ Events2.interval = 1160, 1240
 # 2320, 2480 (~ 1 texts/ hour)
 
 Events2.size = 250k,300k
+# Events2.size = 500k,1M
 # range of message source/destination addresses
 Events2.hosts = 0,40
 Events2.prefix = M
@@ -99,8 +100,8 @@ Report.nrofReports = 6
 # length of the warm up period (simulated seconds)
 Report.warmup = 5
 # default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/ProphetFix/Haggle3
-# Report.reportDir = reports/EpidemicFix/Haggle3
+Report.reportDir = reports/ProphetFix/Haggle3/sizemessage250
+# Report.reportDir = reports/EpidemicFix/Haggle3/sizemessage250
 # Report classes to load
 
 Report.report1 = LatencyPerContactReport

@@ -51,8 +51,8 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
     private FIS fclResource;
     private FIS fclFinal;
 //    private Map<DTNHost, Double> rata2;
-    private LinkedList<Double> sampelBuffer;        
-    private LinkedList<Double> sampelVariansi;        
+    private LinkedList<Double> sampelBuffer;
+    private LinkedList<Double> sampelVariansi;
     private Double rata2buffer;
     private Double variansibuffer;
     protected Map<DTNHost, Double> startTimestamps;
@@ -84,7 +84,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         this.rata2buffer = 0.0;
         this.variansibuffer = 0.0;
         startTimestamps = new HashMap<DTNHost, Double>();
-        connHistory = new HashMap<DTNHost, List<Duration>>();       
+        connHistory = new HashMap<DTNHost, List<Duration>>();
         sampelBuffer = new LinkedList<>();
         sampelVariansi = new LinkedList<>();
 //        varianceMap = new HashMap<DTNHost, List<Double>>();
@@ -116,7 +116,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
             history.add(new Duration(getLastDisconnect, currentTime));
         }
 //        Semakin Tinggi Semakin Penuh
-
+        
         connHistory.put(peer, history);
         this.startTimestamps.remove(peer);
 
@@ -157,14 +157,17 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
 
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Double me = this.rata2buffer;
-        Double peer = de.rata2buffer;
-        List<Double> buffer;
+        Double me = this.variansibuffer;
+        Double peer = de.variansibuffer;
+//        Double me = this.rata2buffer;
+//        Double peer = de.rata2buffer;
+//        System.out.println("Me = "+me+"\tPeer = "+peer);
+         List<Double> buffer;
 
-        if (!bufferMap.containsKey(peer)) {
+        if (!bufferMap.containsKey(otherHost)) {
             buffer = new LinkedList<Double>();
         } else {
-            buffer = bufferMap.get(peer);
+            buffer = bufferMap.get(otherHost);
         }
         buffer.add(me);
         bufferMap.put(otherHost, buffer);
@@ -229,39 +232,41 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
             sigmf += Math.pow(timeDuration, 2);
         }
         Double d = (k * (Math.pow(N, 2) - sigmf)) / (Math.pow(N, 2) * (k - 1));
-//        if (d.isNaN()) {
-//            d = 0.0;
-//        }
+        if (d.isNaN()) {
+            d = 0.0;
+        }
         return d;
     }
 
-    public void getNormalizedVarianceBufferOfNodes() {
-        double k = sampelVariansi.size();
+    public double getNormalizedVarianceBufferOfNodes() {
+        double k = sampelBuffer.size();
         double N = 0;
         double sigmf = 0;
-        Iterator<Double> iterator = sampelVariansi.iterator();
+        Iterator<Double> iterator = sampelBuffer.iterator();
         while (iterator.hasNext()) {
             Double buffer = iterator.next();
             double timeDuration = buffer;
             N += timeDuration;
             sigmf += Math.pow(timeDuration, 2);
         }
-        variansibuffer = (k * (Math.pow(N, 2) - sigmf)) / (Math.pow(N, 2) * (k - 1));
-//        if (d.isNaN()) {
-//            d = 0.0;
-//        }
-
+        Double hasil = (k * (Math.pow(N, 2) - sigmf)) / (Math.pow(N, 2) * (k - 1));
+       
+        if (hasil.isNaN()) {
+            hasil = 0.0;
+        }
+        return hasil;
     }
 
-    public void getAverageBuffer() {
+    public double getAverageBuffer() {
 
         double rata2 = 0;
         for (Double sampel : sampelBuffer) {
             rata2 += sampel;
         }
 //        rata2buffer.add(rata2 / sampelBuffer.size());
-        rata2buffer = rata2 / sampelBuffer.size();
-
+        double hasil = rata2 / sampelBuffer.size();
+        
+        return hasil;
     }
 
     public List<Duration> getListDuration(DTNHost nodes) {
@@ -285,7 +290,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         return c;
     }
 
-    public void getVarianceBufferOfNodes() {
+    public double getVarianceBufferOfNodes() {
         // semakin tinggi semakin jelek karena tersebar
         List<Double> list = sampelBuffer;
         Iterator<Double> buffer = list.iterator();
@@ -295,8 +300,9 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
             Double d = buffer.next();
             temp += Math.pow(d - mean, 2);
         }
-        variansibuffer = temp / list.size();
-//        return temp / list.size();
+//        variansibuffer = temp / list.size();
+        
+        return temp / list.size();
     }
 
     public double getVarianceOfNodes(DTNHost nodes) {
@@ -360,12 +366,16 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, BufferDetectionE
         double simTime = SimClock.getTime();
         if (simTime - lastRecord >= interval) {
             sampelBuffer.add(thishost.getBufferOccupancy());
-//            sampelVariansi.add(thishost.getBufferOccupancy());
-            
-            if (sampelBuffer.size() == 5) {
-                getAverageBuffer();
-//                getVarianceBufferOfNodes();
+            sampelVariansi.add(thishost.getBufferOccupancy());
+
+            if (sampelBuffer.size() == 3) {
+                rata2buffer = getAverageBuffer();
+                variansibuffer = getVarianceBufferOfNodes();
+//                variansibuffer = getNormalizedVarianceBufferOfNodes();
                 sampelBuffer.remove(0);
+//                System.out.println(sampelBuffer);
+//                System.out.println("Rata2 = "+rata2buffer);
+//                System.out.println("Variansi = "+sampelBuffer);
             }
 
         }

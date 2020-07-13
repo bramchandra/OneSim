@@ -71,7 +71,8 @@ Events1.filePath = Haggle3-Infocom5.csv
 Events2.class = MessageEventGenerator
 # change interval to have more or less messages, see javadocs for more information.
 Events2.interval = 1160,1240
-Events2.size = 250k, 300k
+# Events2.size = 500k,1M
+Events2.size = 250k,300k
 # range of message source/destination addresses
 Events2.hosts = 0, 40
 Events2.prefix = M
@@ -90,9 +91,11 @@ Report.nrofReports = 1
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
-# Report.reportDir = reports/FuzzyFix/PDF/Variansi/Haggle
-Report.reportDir = reports/COBA/PDF/variansiBuffer/Haggle
-Report.reportDir = reports/COBA/PDF/ratarataBuffer/Haggle
+# Report.reportDir = reports/COBA/PDF/Variansi/Haggle/melebihkecildaripeer
+# Report.reportDir = reports/COBA/PDF/Closeness/Haggle/
+# Report.reportDir = reports/COBA/PDF/variansiBuffer/normalized/Haggle/melebihbesardaripeer/sizemessage250
+Report.reportDir = reports/COBA/PDF/variansiBuffer/biasa/Haggle/sizemessage250/Per3Data
+# Report.reportDir = reports/COBA/PDF/ratarataBuffer/Haggle/sizemessage250/Per3Data
 # Report.reportDir = reports/COBA/MOFO
 # Report classes to load
 # Report.report1 = VarianceTiapNodeYangDitemuiReport
