@@ -13,12 +13,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
-import routing.community.VarianceDetectionEngine;
+import routing.community.ResourceDetectionEngine;
+import routing.community.SimilarityDetectionEngine;
 
 /**
  * Provides the inter-contact duration data for making probability density
@@ -30,8 +32,11 @@ public class VarianceTiapNodeYangDitemuiReport extends Report {
 
     public static final String NODE_ID = "ToNodeID";
     private int nodeAddress;
-    private Map<DTNHost, List<Double>> varianceData;
-    private Map<DTNHost, Double> avgVariance;
+    private Map<DTNHost, List<Double>> bufferData;
+    private Map<DTNHost, List<Double>> nodeComm;
+    private Map<DTNHost, List<Double>> avgBuffer;
+    private Double max;
+    private Double min;
 
     public VarianceTiapNodeYangDitemuiReport() {
         super();
@@ -41,8 +46,9 @@ public class VarianceTiapNodeYangDitemuiReport extends Report {
         } else {
             nodeAddress = 0;
         }
-        varianceData = new HashMap<>();
-        avgVariance = new HashMap<>();
+        bufferData = new HashMap<>();
+        avgBuffer = new HashMap<>();
+        nodeComm = new HashMap<>();
     }
 
     public void done() {
@@ -57,57 +63,99 @@ public class VarianceTiapNodeYangDitemuiReport extends Report {
             if (!(de instanceof RoutingDecisionEngine)) {
                 continue;
             }
-            VarianceDetectionEngine cd = (VarianceDetectionEngine) de;
-            Map<DTNHost, List<Double>> nodeComm = cd.getVarianceMap();
-
-            if (host.getAddress() == nodeAddress) {
-                varianceData = nodeComm;
-
-//                System.out.println(varianceData+"\n");
-            }
+            SimilarityDetectionEngine cd = (SimilarityDetectionEngine) de;
+//            List<Double> history;            
+            nodeComm.put(host, cd.getVariance());
+//            Map<DTNHost, List<Double>> temp = cd.getVariance();
+//            for (Map.Entry<DTNHost, List<Double>> entry : temp.entrySet()) {
+//                DTNHost key = entry.getKey();
+//                List<Double> value = entry.getValue();
+//                nodeComm.put(key, value);
+//            }
+//            if (host.getAddress() == nodeAddress) {
+//                bufferData = nodeComm;
+//                
+//            }
 
         }
-
 //        for (DTNHost node : nodes) {
-//            if (varianceData.containsKey(node)) {
-//                double avg = avgVarianceCalc(varianceData.get(node));
-//                avgVariance.put(node, avg);
+//            for (int i = 0; i < nodeComm.size(); i++) {
+//                List<Double> avg;
+//                if (!nodeComm.get(i).containsKey(node)) {
+//                    avg = new LinkedList<>();
+//                } else {
+//                    avg = nodeComm.get(i).get(node);
+//                }
+//                avg.add(avgBufferCalc(nodeComm.get(i).get(node)));
+//                avgBuffer.put(node, avg);
+//            }
+//        }
+//        for (int i = 0; i < nodeComm.size(); i++) {
+//            for (DTNHost node : nodes) {
+//                if (nodeComm.get(i).containsKey(node)) {
+//                    System.out.println(node);
+////                    double avg = avgBufferCalc(nodeComm.get(i).get(node));
+//                    
+//                }
 //            }
 //        }
 //        double values = 0;
-//        for (Double avgEncounter : avgVariance.values()) {
+//        for (Double avgEncounter : avgBuffer.values()) {
 //            values += avgEncounter;
 //        }
-//        double avgValues = values/avgVariance.size();
-//        write("Variance Time To " +nodeAddress);
-//        write("Nodes"+"\n"+"Closeness");
-        for (Map.Entry<DTNHost, List<Double>> entry : varianceData.entrySet()) {
+//
+//        double avgValues = values / avgBuffer.size();
+//
+//        write("Buffer Time To " + nodeAddress);
+//        write("Nodes" + "\t" + "Buffer");
 
+        for (Map.Entry<DTNHost, List<Double>> entry : nodeComm.entrySet()) {
             DTNHost key = entry.getKey();
             List<Double> value = entry.getValue();
             String print = "";
-
             for (Double double1 : value) {
 
                 print = print + "\n" + double1;
             }
-
+//            System.out.println(print);
             write(print);
-//            write("\n" + value);
+//            write(value+"");
+
         }
-//        write("Average Variance  = "+avgValues);
+//        write("Average Buffer  = " + avgValues);
         super.done();
     }
 
-    private double avgVarianceCalc(List<Double> varianceList) {
-        Iterator<Double> i = varianceList.iterator();
+//    private void findMaxMin(Map<DTNHost, List<Integer>> data) {
+//        ArrayList<Integer> allValues = new ArrayList();
+//        for (Map.Entry<DTNHost, List<Integer>> entry : data.entrySet()) {
+//            DTNHost key = entry.getKey();
+//            List<Integer> value = entry.getValue();
+//            for (int i = 0; i < value.size(); i++) {
+//                allValues.add(value.get(i));
+//            }
+//
+//        }
+//        for (int i = 0; i < allValues.size(); i++) {
+//            min = allValues.get(0);
+//            max = allValues.get(0);
+//            if (allValues.get(i) < min) {
+//                min = allValues.get(i);
+//            }
+//            if (allValues.get(i) > max) {
+//                max = allValues.get(i);
+//            }
+//        }
+//    }
+    private double avgBufferCalc(List<Double> bufferList) {
+        Iterator<Double> i = bufferList.iterator();
         double jumlah = 0;
         while (i.hasNext()) {
             Double d = i.next();
             jumlah += d;
         }
 
-        double avgDuration = jumlah / varianceList.size();
+        double avgDuration = jumlah / bufferList.size();
         return avgDuration;
     }
 }

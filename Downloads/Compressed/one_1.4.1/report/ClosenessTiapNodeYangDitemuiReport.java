@@ -20,6 +20,7 @@ import routing.DecisionEngineRouter;
 import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.ResourceDetectionEngine;
+import routing.community.SimilarityDetectionEngine;
 
 /**
  * Provides the inter-contact duration data for making probability density
@@ -27,7 +28,7 @@ import routing.community.ResourceDetectionEngine;
  *
  * @author Gregorius Bima, Sanata Dharma University
  */
-public class BufferTiapNodeYangDitemuiReport extends Report {
+public class ClosenessTiapNodeYangDitemuiReport extends Report {
 
     public static final String NODE_ID = "ToNodeID";
     private int nodeAddress;
@@ -37,7 +38,7 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
     private Double max;
     private Double min;
 
-    public BufferTiapNodeYangDitemuiReport() {
+    public ClosenessTiapNodeYangDitemuiReport() {
         super();
         Settings s = getSettings();
         if (s.contains(NODE_ID)) {
@@ -62,10 +63,15 @@ public class BufferTiapNodeYangDitemuiReport extends Report {
             if (!(de instanceof RoutingDecisionEngine)) {
                 continue;
             }
-            ResourceDetectionEngine cd = (ResourceDetectionEngine) de;
+            SimilarityDetectionEngine cd = (SimilarityDetectionEngine) de;
 //            List<Double> history;
-           
-            nodeComm.put(host, cd.getBuffer());
+//            Map<DTNHost, List<Double>> temp = cd.getCloseness();
+            nodeComm.put(host, cd.getCloseness());
+//            for (Map.Entry<DTNHost, List<Double>> entry : temp.entrySet()) {
+//                DTNHost key = entry.getKey();
+//                List<Double> value = entry.getValue();
+//                nodeComm.put(key, value);
+//            }
 //            if (host.getAddress() == nodeAddress) {
 //                bufferData = nodeComm;
 //                
