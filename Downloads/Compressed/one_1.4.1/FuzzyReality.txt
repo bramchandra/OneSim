@@ -39,9 +39,9 @@ Group.movementModel = StationaryMovement
 Group.router = DecisionEngineRouter
 # DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
 DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
-DecisionEngineRouter.fclFinal = fcl/Fuzzy.fcl
-DecisionEngineRouter.fclSimilarity = fcl/Similarity.fcl
-DecisionEngineRouter.fclResource = fcl/Resource2.fcl
+DecisionEngineRouter.fclFinal = fcl/reality/Fuzzy.fcl
+DecisionEngineRouter.fclSimilarity = fcl/reality/Similarity.fcl
+DecisionEngineRouter.fclResource = fcl/reality/Resource2.fcl
 Group.bufferSize = 20M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface

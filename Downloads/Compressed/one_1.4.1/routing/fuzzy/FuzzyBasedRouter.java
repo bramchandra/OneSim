@@ -162,12 +162,10 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
         Double me = this.getVarianceBufferOfNodes(this.sampelBuffer);
         Double peer = de.getVarianceBufferOfNodes(de.sampelBuffer);
-
-        variansibuffer.add(me);
+//variansibuffer.add(me);
 //        de.getNormalizedVarianceOfNodes(dest);
 //        Double me = this.rata2buffer;
 //        Double peer = de.rata2buffer;
-
 //        List<Double> buffer2;
 //        if (!closeness.containsKey(otherHost)) {
 //            buffer2 = new LinkedList<Double>();
@@ -287,7 +285,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
     }
 
     public double getVarianceBufferOfNodes(List<Double> list) {
-        // semakin tinggi semakin jelek karena tersebar
+        // semakin tinggi data semakin tersebar
         List<Double> list2 = list;
         Iterator<Double> buffer = list.iterator();
         double temp = 0;
@@ -346,24 +344,26 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
 
         return (FuzzyBasedRouter) ((DecisionEngineRouter) otherRouter).getDecisionEngine();
     }
-//FOR REPORT PURPOSE
+
 
     @Override
     public void update(DTNHost thishost) {
         double simTime = SimClock.getTime();
         if (simTime - lastRecord >= interval) {
             sampelBuffer.add(thishost.getBufferOccupancy());
-
-//            variansibuffer.add(getVarianceBufferOfNodes(sampelVariansi));
-            if (sampelBuffer.size() == 5) {
+            
+            variansibuffer.add(getVarianceBufferOfNodes(sampelBuffer));
+            if (sampelBuffer.size() > 4) {
                 List temp = sampelBuffer.subList(sampelBuffer.size() - 5, sampelBuffer.size() - 1);
                 rata2buffer.add(getAverageBuffer(temp));
+
             }
 
         }
         this.lastRecord = simTime - simTime % interval;
     }
 
+    //FOR REPORT PURPOSE
     @Override
     public List<Double> getBuffer() {
         return rata2buffer;

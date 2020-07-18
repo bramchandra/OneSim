@@ -94,7 +94,7 @@ Report.warmup = 1
 # Report.reportDir = reports/COBA/PDF/Variansi/Reality/melebihkecildaripeer
 # Report.reportDir = reports/COBA/PDF/Closeness/Reality
 # Report.reportDir = reports/Baru/COBA/PDF/variansiBuffer/Reality
-Report.reportDir = reports/Baru
+Report.reportDir = reports/Baru2
 # Report classes to load
 # Report.report1 = VarianceTiapNodeYangDitemuiReport
 Report.report1 = BufferTiapNodeYangDitemuiReport

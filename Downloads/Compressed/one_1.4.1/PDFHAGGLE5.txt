@@ -3,7 +3,7 @@
 #
 
 ## Scenario settings
-Scenario.name = PDFHAGGLE3NORMALIZED -
+Scenario.name = PDFHAGGLE3 -
 Scenario.simulateConnections = false
 Scenario.updateInterval = 1
 # 43200s == 12h
@@ -94,7 +94,7 @@ Report.warmup = 1
 # Report.reportDir = reports/COBA/PDF/Variansi/Haggle/melebihkecildaripeer
 # Report.reportDir = reports/COBA/PDF/Closeness/Haggle/
 # Report.reportDir = reports/COBA/PDF/variansiBuffer/normalized/Haggle/melebihbesardaripeer/sizemessage250
-Report.reportDir = reports/Baru
+Report.reportDir = reports/Baru2
 # Report.reportDir = reports/COBA/PDF/ratarataBuffer/Haggle/sizemessage250/Per3Data
 # Report.reportDir = reports/COBA/MOFO
 # Report classes to load
