@@ -32,22 +32,18 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
 
     public static final String NODE_ID = "ToNodeID";
     private int nodeAddress;
-    private Map<DTNHost, List<Double>> bufferData;
-    private Map<DTNHost, List<Double>> nodeComm;
-    private Map<DTNHost, List<Double>> avgBuffer;
+//    private Map<DTNHost, List<Double>> bufferData;
+    private Map<DTNHost, ArrayList<Double>> nodeComm;
+//    private Map<DTNHost, List<Double>> avgBuffer;
     private Double max;
     private Double min;
 
     public ClosenessTiapNodeYangDitemuiReport() {
         super();
         Settings s = getSettings();
-        if (s.contains(NODE_ID)) {
-            nodeAddress = s.getInt(NODE_ID);
-        } else {
-            nodeAddress = 0;
-        }
-        bufferData = new HashMap<>();
-        avgBuffer = new HashMap<>();
+        
+//        bufferData = new HashMap<>();
+//        avgBuffer = new HashMap<>();
         nodeComm = new HashMap<>();
     }
 
@@ -78,38 +74,9 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
 //            }
 
         }
-//        for (DTNHost node : nodes) {
-//            for (int i = 0; i < nodeComm.size(); i++) {
-//                List<Double> avg;
-//                if (!nodeComm.get(i).containsKey(node)) {
-//                    avg = new LinkedList<>();
-//                } else {
-//                    avg = nodeComm.get(i).get(node);
-//                }
-//                avg.add(avgBufferCalc(nodeComm.get(i).get(node)));
-//                avgBuffer.put(node, avg);
-//            }
-//        }
-//        for (int i = 0; i < nodeComm.size(); i++) {
-//            for (DTNHost node : nodes) {
-//                if (nodeComm.get(i).containsKey(node)) {
-//                    System.out.println(node);
-////                    double avg = avgBufferCalc(nodeComm.get(i).get(node));
-//                    
-//                }
-//            }
-//        }
-//        double values = 0;
-//        for (Double avgEncounter : avgBuffer.values()) {
-//            values += avgEncounter;
-//        }
-//
-//        double avgValues = values / avgBuffer.size();
-//
-//        write("Buffer Time To " + nodeAddress);
-//        write("Nodes" + "\t" + "Buffer");
 
-        for (Map.Entry<DTNHost, List<Double>> entry : nodeComm.entrySet()) {
+
+        for (Map.Entry<DTNHost, ArrayList<Double>> entry : nodeComm.entrySet()) {
             DTNHost key = entry.getKey();
             List<Double> value = entry.getValue();
             String print = "";
@@ -126,27 +93,6 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
         super.done();
     }
 
-//    private void findMaxMin(Map<DTNHost, List<Integer>> data) {
-//        ArrayList<Integer> allValues = new ArrayList();
-//        for (Map.Entry<DTNHost, List<Integer>> entry : data.entrySet()) {
-//            DTNHost key = entry.getKey();
-//            List<Integer> value = entry.getValue();
-//            for (int i = 0; i < value.size(); i++) {
-//                allValues.add(value.get(i));
-//            }
-//
-//        }
-//        for (int i = 0; i < allValues.size(); i++) {
-//            min = allValues.get(0);
-//            max = allValues.get(0);
-//            if (allValues.get(i) < min) {
-//                min = allValues.get(i);
-//            }
-//            if (allValues.get(i) > max) {
-//                max = allValues.get(i);
-//            }
-//        }
-//    }
     private double avgBufferCalc(List<Double> bufferList) {
         Iterator<Double> i = bufferList.iterator();
         double jumlah = 0;

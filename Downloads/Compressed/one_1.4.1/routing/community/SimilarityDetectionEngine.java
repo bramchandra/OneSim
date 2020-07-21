@@ -6,7 +6,7 @@
 package routing.community;
 
 import core.DTNHost;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -15,6 +15,6 @@ import java.util.Map;
  */
 public interface SimilarityDetectionEngine {
 
-    public List<Double> getCloseness();
-    public List<Double> getVariance();
+    public ArrayList<Double> getCloseness();
+    public ArrayList<Double> getVariance();
 }

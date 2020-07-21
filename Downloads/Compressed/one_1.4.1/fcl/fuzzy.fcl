@@ -11,21 +11,21 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY fuzzyBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := trian -0.4 0 1; 
-	TERM medium:= trian 0 0.5 1;
-	TERM high:= trian 0 1 1.4;
+	TERM low := trian 0 0.225 0.45; 
+	TERM medium:= trian 0.225 0.45 0.675;
+	TERM high:= trian 0.45 0.675 0.9;
 END_FUZZIFY
 
 FUZZIFY fuzzySimilarity			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-	TERM low := trian -0.4 0 1; 
-	TERM medium:= trian 0 0.5 1;
-	TERM high:= trian 0 1 1.4;
+	TERM low := trian 0 0.225 0.45; 
+	TERM medium:= trian 0.225 0.45 0.675;
+	TERM high:= trian 0.45 0.675 0.9;
 END_FUZZIFY
 
 DEFUZZIFY hasil			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-	TERM low := trian -0.4 0 1; 
-	TERM medium:= trian 0 0.5 1;
-	TERM high:= trian 0 1 1.4;
+	TERM low := trian 0 0.15 0.3; 
+	TERM medium:= trian 0.3 0.45 0.6;
+	TERM high:= trian 0.6 0.75 0.9;
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY

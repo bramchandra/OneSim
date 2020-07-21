@@ -46,3 +46,49 @@ END_RULEBLOCK
 
 END_FUNCTION_BLOCK
 
+FUNCTION_BLOCK reality	// Block definition (there may be more than one block per file)
+
+VAR_INPUT				// Define input variables
+	averageBuffer : REAL;
+	varianceBuffer : REAL;
+END_VAR
+
+VAR_OUTPUT				// Define output variable
+	hasil : REAL;
+END_VAR
+
+FUZZIFY averageBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM low := trian 0 0 43; 	
+	TERM high:= trian 0 100 100;
+END_FUZZIFY
+
+FUZZIFY varianceBuffer			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM low := trian 0 0 282; 
+	TERM medium:= trian 57.68 282 490;
+	TERM high:= trian 282 490 490;
+END_FUZZIFY
+
+DEFUZZIFY hasil			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM low := trian 0 0.15 0.3; 
+	TERM medium:= trian 0.3 0.45 0.6;
+	TERM high:= trian 0.6 0.75 0.9;
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+        
+        RULE 1 : IF averageBuffer IS high AND varianceBuffer IS high THEN hasil IS low;
+        RULE 2 : IF averageBuffer IS high AND varianceBuffer IS medium THEN hasil IS low;
+        RULE 3 : IF averageBuffer IS high AND varianceBuffer IS low THEN hasil IS medium;
+        RULE 4 : IF averageBuffer IS low AND varianceBuffer IS high THEN hasil IS medium;
+        RULE 5 : IF averageBuffer IS low AND varianceBuffer IS medium THEN hasil IS high;
+        RULE 6 : IF averageBuffer IS low AND varianceBuffer IS low THEN hasil IS high;
+        
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

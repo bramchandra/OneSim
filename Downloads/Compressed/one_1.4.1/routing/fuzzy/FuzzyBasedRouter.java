@@ -47,19 +47,17 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
     public static final String TRANSFER_OF_UTILITY = "hasil";
     private double lastRecord = Double.MIN_VALUE;
     private int interval = 1000;
-    public DTNHost thisBuffer;
     private FIS fclSimilarity;
     private FIS fclResource;
     private FIS fclFinal;
-//    private Map<DTNHost, Double> rata2;
     private LinkedList<Double> sampelBuffer;
     private LinkedList<Double> sampelVariansi;
     private LinkedList<Double> rata2buffer;
     private LinkedList<Double> variansibuffer;
     protected Map<DTNHost, Double> startTimestamps;
     protected Map<DTNHost, List<Duration>> connHistory;
-    protected LinkedList<Double> closeness;
-    protected LinkedList<Double> variance;
+    protected ArrayList<Double> closeness;
+    protected ArrayList<Double> variance;
     public static final String INTERVAL_UPDATE = "intervalUpdate";
 
     public FuzzyBasedRouter(Settings s) {
@@ -89,8 +87,8 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
         connHistory = new HashMap<DTNHost, List<Duration>>();
         sampelBuffer = new LinkedList<>();
         sampelVariansi = new LinkedList<>();
-        closeness = new LinkedList<>();
-        variance = new LinkedList<>();
+        closeness = new ArrayList<>();
+        variance = new ArrayList<>();
 //        varianceMap = new HashMap<DTNHost, List<Double>>();
 
     }
@@ -99,13 +97,13 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
     public void connectionUp(DTNHost thisHost, DTNHost peer) {
         // Find or create the connection history list
 
-        thisBuffer = thisHost;
+        
         double getLastDisconnect = 0;
         if (startTimestamps.containsKey(peer)) {
             getLastDisconnect = startTimestamps.get(peer);
         }
         double currentTime = SimClock.getTime();
-//        List<Double> Buffhistory;
+
         List<Duration> history;
 
         if (!connHistory.containsKey(peer)) {
@@ -118,7 +116,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
         if (currentTime - getLastDisconnect > 0) {
             history.add(new Duration(getLastDisconnect, currentTime));
         }
-//        Semakin Tinggi Semakin Penuh
 
         connHistory.put(peer, history);
         this.startTimestamps.remove(peer);
@@ -160,28 +157,17 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
 
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Double me = this.getVarianceBufferOfNodes(this.sampelBuffer);
-        Double peer = de.getVarianceBufferOfNodes(de.sampelBuffer);
-//variansibuffer.add(me);
-//        de.getNormalizedVarianceOfNodes(dest);
-//        Double me = this.rata2buffer;
-//        Double peer = de.rata2buffer;
-//        List<Double> buffer2;
-//        if (!closeness.containsKey(otherHost)) {
-//            buffer2 = new LinkedList<Double>();
-//        } else {
-//            buffer2 = closeness.get(otherHost);
-//        }
-//        buffer2.add(me);
-//        closeness.put(otherHost, buffer2);
+        Double me = this.variansibuffer.getLast();
+        Double peer = de.variansibuffer.getLast();
+        closeness.add(me);
+//        variance.add(this.getNormalizedVarianceOfNodes(dest));
         return me > peer;
     }
 
     private double DefuzzificationSimilarity(DTNHost dest) {
         double closenessValue = getClosenessOfNodes(dest);
         double varianceValue = getNormalizedVarianceOfNodes(dest);
-        FunctionBlock functionBlock = fclSimilarity.getFunctionBlock(null);
-
+        FunctionBlock functionBlock = fclSimilarity.getFunctionBlock("haggle3Infocom5");
         functionBlock.setVariable(CLOSENESS, closenessValue);
         functionBlock.setVariable(VARIANCE, varianceValue);
         functionBlock.evaluate();
@@ -193,10 +179,10 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
 
     private double DefuzzificationBuffer() {
 
-        double averageBufferValue = this.rata2buffer.getLast();
-        double varianceValue = this.variansibuffer.getLast();
+        double averageBufferValue = rata2buffer.getLast();
+        double varianceValue = variansibuffer.getLast();
 //        System.out.println(rata2buffer);
-        FunctionBlock functionBlock = fclResource.getFunctionBlock(null);
+        FunctionBlock functionBlock = fclResource.getFunctionBlock("haggle3Infocom5");
 //        System.out.println(averageBufferValue+"\t"+varianceValue);
         functionBlock.setVariable(AVERAGEBUFFER, averageBufferValue);
         functionBlock.setVariable(VARIANCEBUFFER, varianceValue);
@@ -207,7 +193,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
         return tou.getValue();
     }
 
-    private double DefuzzificationFinal(DTNHost dest, DTNHost nodes) {
+    private double DefuzzificationFinal(DTNHost dest) {
         double similarity = DefuzzificationSimilarity(dest);
         double buffer = DefuzzificationBuffer();
         FunctionBlock functionBlock = fclFinal.getFunctionBlock(null);
@@ -277,7 +263,6 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
     private Double getClosenessOfNodes(DTNHost nodes) {
         double rataShortestSeparation = getAverageShortestSeparationOfNodes(nodes);
         double variansi = getVarianceOfNodes(nodes);
-
         Double c = Math.exp(-(Math.pow(rataShortestSeparation, 2) / (2 * variansi)));
 //        System.out.println(c);
 
@@ -350,13 +335,11 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
     public void update(DTNHost thishost) {
         double simTime = SimClock.getTime();
         if (simTime - lastRecord >= interval) {
-            sampelBuffer.add(thishost.getBufferOccupancy());
-            
+            sampelBuffer.add(thishost.getBufferOccupancy());            
             variansibuffer.add(getVarianceBufferOfNodes(sampelBuffer));
             if (sampelBuffer.size() > 4) {
                 List temp = sampelBuffer.subList(sampelBuffer.size() - 5, sampelBuffer.size() - 1);
                 rata2buffer.add(getAverageBuffer(temp));
-
             }
 
         }
@@ -371,15 +354,15 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
 
     @Override
     public List<Double> getVariansiBuffer() {
-        return variansibuffer;
+        return closeness;
     }
 //    @Override
-//    public List<Double> getCloseness() {
+//    public ArrayList<Double> getCloseness() {
 //        return closeness;
 //    }
 //
 //    @Override
-//    public List<Double> getVariance() {
+//    public ArrayList<Double> getVariance() {
 //        return variance;
 //    }
 

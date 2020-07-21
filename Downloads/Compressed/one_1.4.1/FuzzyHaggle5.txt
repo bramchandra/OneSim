@@ -40,9 +40,9 @@ Group.movementModel = StationaryMovement
 Group.router = DecisionEngineRouter
 # DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
 DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
-DecisionEngineRouter.fclFinal = fcl/haggle/Fuzzy.fcl
-DecisionEngineRouter.fclSimilarity = fcl/haggle/Similarity.fcl
-DecisionEngineRouter.fclResource = fcl/haggle/Resource.fcl
+DecisionEngineRouter.fclFinal = fcl/Fuzzy.fcl
+DecisionEngineRouter.fclSimilarity = fcl/Similarity.fcl
+DecisionEngineRouter.fclResource = fcl/Resource.fcl
 Group.bufferSize = 10M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
@@ -93,7 +93,7 @@ Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
 # Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzyFinal
 # Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzyBuffer
-Report.reportDir = reports/COBA/fuzzyBuffer
+Report.reportDir = reports/Baru2/fuzzySimilarity
 # Report.reportDir = reports/FuzzyFix/HaggleInfocomFix/fuzzySimilarity2
 # Report classes to load
 
