@@ -11,14 +11,15 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY averageBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := trian 0 0 23.24; 	
-	TERM high:= trian 0 100 100;
+	TERM low := trian 0 0 24; 
+        TERM medium:= trian 10.74 24 37.25;	
+	TERM high:= trian 24 100 100;
 END_FUZZIFY
 
 FUZZIFY varianceBuffer			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-	TERM low := trian 0 0 161; 
-	TERM medium:= trian 77.58 161 230;
-	TERM high:= trian 161 230 230;
+	TERM low := trian 0 0 132; 
+	TERM medium:= trian 57.63 132 206.4;
+	TERM high:= trian 132 230 230;
 END_FUZZIFY
 
 DEFUZZIFY hasil			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
@@ -37,9 +38,12 @@ RULEBLOCK No1
         RULE 1 : IF averageBuffer IS high AND varianceBuffer IS high THEN hasil IS low;
         RULE 2 : IF averageBuffer IS high AND varianceBuffer IS medium THEN hasil IS low;
         RULE 3 : IF averageBuffer IS high AND varianceBuffer IS low THEN hasil IS medium;
-        RULE 4 : IF averageBuffer IS low AND varianceBuffer IS high THEN hasil IS medium;
-        RULE 5 : IF averageBuffer IS low AND varianceBuffer IS medium THEN hasil IS high;
-        RULE 6 : IF averageBuffer IS low AND varianceBuffer IS low THEN hasil IS high;
+        RULE 4 : IF averageBuffer IS medium AND varianceBuffer IS high THEN hasil IS low;
+        RULE 5 : IF averageBuffer IS medium AND varianceBuffer IS medium THEN hasil IS medium;
+        RULE 6 : IF averageBuffer IS medium AND varianceBuffer IS low THEN hasil IS medium;
+        RULE 7 : IF averageBuffer IS low AND varianceBuffer IS high THEN hasil IS medium;
+        RULE 8 : IF averageBuffer IS low AND varianceBuffer IS medium THEN hasil IS high;
+        RULE 9 : IF averageBuffer IS low AND varianceBuffer IS low THEN hasil IS high;
         
 	
 END_RULEBLOCK
@@ -58,13 +62,14 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY averageBuffer			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM low := trian 0 0 43; 	
-	TERM high:= trian 0 100 100;
+	TERM low := trian 0 0 62.2; 
+        TERM medium:= trian 27.19 62.2 97.02;
+	TERM high:= trian 62.2 100 100;
 END_FUZZIFY
 
 FUZZIFY varianceBuffer			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
 	TERM low := trian 0 0 282; 
-	TERM medium:= trian 57.68 282 490;
+	TERM medium:= trian 110.5 282 453.5;
 	TERM high:= trian 282 490 490;
 END_FUZZIFY
 
@@ -84,9 +89,12 @@ RULEBLOCK No1
         RULE 1 : IF averageBuffer IS high AND varianceBuffer IS high THEN hasil IS low;
         RULE 2 : IF averageBuffer IS high AND varianceBuffer IS medium THEN hasil IS low;
         RULE 3 : IF averageBuffer IS high AND varianceBuffer IS low THEN hasil IS medium;
-        RULE 4 : IF averageBuffer IS low AND varianceBuffer IS high THEN hasil IS medium;
-        RULE 5 : IF averageBuffer IS low AND varianceBuffer IS medium THEN hasil IS high;
-        RULE 6 : IF averageBuffer IS low AND varianceBuffer IS low THEN hasil IS high;
+        RULE 4 : IF averageBuffer IS medium AND varianceBuffer IS high THEN hasil IS low;
+        RULE 5 : IF averageBuffer IS medium AND varianceBuffer IS medium THEN hasil IS medium;
+        RULE 6 : IF averageBuffer IS medium AND varianceBuffer IS low THEN hasil IS medium;
+        RULE 7 : IF averageBuffer IS low AND varianceBuffer IS high THEN hasil IS medium;
+        RULE 8 : IF averageBuffer IS low AND varianceBuffer IS medium THEN hasil IS high;
+        RULE 9 : IF averageBuffer IS low AND varianceBuffer IS low THEN hasil IS high;
         
 	
 END_RULEBLOCK

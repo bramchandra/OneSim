@@ -6,7 +6,8 @@
 package routing.community;
 
 import core.DTNHost;
-import java.util.List;
+import java.util.ArrayList;
+
 import java.util.Map;
 
 /**
@@ -14,6 +15,6 @@ import java.util.Map;
  * @author Khusus Skripsi Fuzzy
  */
 public interface ResourceDetectionEngine {
-    public List<Double> getBuffer();
-    public List<Double> getVariansiBuffer();
+    public Map<DTNHost,ArrayList<Double>> getBuffer();
+    public Map<DTNHost,ArrayList<Double>> getVariansiBuffer();
 }

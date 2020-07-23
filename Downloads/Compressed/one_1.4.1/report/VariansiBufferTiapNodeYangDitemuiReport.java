@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import routing.DecisionEngineRouter;
@@ -31,8 +32,11 @@ public class VariansiBufferTiapNodeYangDitemuiReport extends Report {
     public static final String NODE_ID = "ToNodeID";
     private int nodeAddress;
     private Map<DTNHost, List<Double>> bufferData;
-    private Map<DTNHost, List<Double>> nodeComm;
-    private Map<DTNHost, Double> avgBuffer;
+    private Map<DTNHost, ArrayList<Double>> nodeComm;
+    private Map<DTNHost, List<Double>> avgBuffer;
+    private List<Map<DTNHost, ArrayList<Double>>> data;
+    private List<Map<DTNHost, Double>> datarata;
+
     private Double max;
     private Double min;
 
@@ -47,6 +51,8 @@ public class VariansiBufferTiapNodeYangDitemuiReport extends Report {
         bufferData = new HashMap<>();
         avgBuffer = new HashMap<>();
         nodeComm = new HashMap<>();
+        data = new LinkedList<>();
+        datarata = new LinkedList<>();
     }
 
     public void done() {
@@ -62,29 +68,47 @@ public class VariansiBufferTiapNodeYangDitemuiReport extends Report {
                 continue;
             }
             ResourceDetectionEngine cd = (ResourceDetectionEngine) de;
-            nodeComm.put(host, cd.getVariansiBuffer());
-//            nodeComm.
-//            if (host.getAddress() == nodeAddress) {
-//                bufferData = nodeComm;
+//            List<Double> history;
+            Map<DTNHost, ArrayList<Double>> temp = cd.getVariansiBuffer();
+            data.add(temp);
+//            System.out.println(data.size());
+        }
+        for (int i = 0; i < data.size(); i++) {
+            for (DTNHost node : nodes) {
+                if (data.get(i).containsKey(node)) {
+//                    System.out.println("");
+                    Double Buffer = avgBufferCalc(data.get(i).get(node));
+                    Map<DTNHost, Double> temp = new HashMap<>();
+                    temp.put(node, Buffer);                    
+                    datarata.add(temp);
+                    
+                }
+            }
+
+        }
+
+
+
+//        for (Map<DTNHost, ArrayList<Double>> map : data) {
+//            for (Map.Entry<DTNHost, ArrayList<Double>> entry : map.entrySet()) {
+//                DTNHost key = entry.getKey();
+//                ArrayList<Double> val = entry.getValue();
+//                 for (int i = 0; i < val.size(); i++) {
+//                    write(val.get(i)+"");                    
+//                    
+//                }
 //                
 //            }
-
-        }
-
-        
-        for (Map.Entry<DTNHost, List<Double>> entry : nodeComm.entrySet()) {
-            DTNHost key = entry.getKey();
-            List<Double> value = entry.getValue();
-            String print = "";
-            for (Double double1 : value) {
-             
-                print = print + "\n" + double1;
+//        }
+        for (Map<DTNHost, Double> map : datarata) {
+            for (Map.Entry<DTNHost, Double> entry : map.entrySet()) {
+                DTNHost key = entry.getKey();
+                Double val = entry.getValue();
+                write(val+"");
+                
             }
-//            System.out.println(print);
-            write(print);
-//            write(value + "");
-
         }
+
 //        write("Average Buffer  = " + avgValues);
         super.done();
     }

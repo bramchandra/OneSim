@@ -15,6 +15,6 @@ import java.util.Map;
  */
 public interface SimilarityDetectionEngine {
 
-    public ArrayList<Double> getCloseness();
-    public ArrayList<Double> getVariance();
+    public Map<DTNHost,ArrayList<Double>> getCloseness();
+    public Map<DTNHost,ArrayList<Double>> getVariance();
 }
