@@ -86,20 +86,20 @@ MovementModel.worldSize = 100, 100
 MovementModel.warmup = 1000
 
 # how many reports to load
-Report.nrofReports = 2
+Report.nrofReports = 1
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
 # Report.reportDir = reports/COBA/PDF/Variansi/Haggle/melebihkecildaripeer
 # Report.reportDir = reports/COBA/PDF/Closeness/Haggle/
 # Report.reportDir = reports/COBA/PDF/variansiBuffer/normalized/Haggle/melebihbesardaripeer/sizemessage250
-Report.reportDir = reports/Baru2
+Report.reportDir = reports/Baru3
 # Report.reportDir = reports/COBA/PDF/ratarataBuffer/Haggle/sizemessage250/Per3Data
 # Report.reportDir = reports/COBA/MOFO
 # Report classes to load
 
-Report.report1 = BufferTiapNodeYangDitemuiReport
-Report.report2 = VariansiBufferTiapNodeYangDitemuiReport
+# Report.report1 = BufferTiapNodeYangDitemuiReport
+Report.report1 = VariansiBufferTiapNodeYangDitemuiReport
 # Report.report1 = ClosenessTiapNodeYangDitemuiReport
 # Report.report2 = VarianceTiapNodeYangDitemuiReport
 

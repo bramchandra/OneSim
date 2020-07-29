@@ -43,8 +43,8 @@ DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
 DecisionEngineRouter.fclFinal = fcl/Fuzzy.fcl
 DecisionEngineRouter.fclSimilarity = fcl/Similarity.fcl
 DecisionEngineRouter.fclResource = fcl/Resource.fcl
-Group.bufferSize = 20M
-Group.waitTime = 0, 120
+Group.bufferSize = 30M
+#Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
 Group.nrofInterfaces = 1
 Group.interface1 = btInterface
@@ -55,7 +55,7 @@ Group.msgTtl = 20160
 
 # group1 (pedestrians) specific settings
 Group1.groupID = A
-Group1.waitTime = 0, 43800
+#Group1.waitTime = 0, 43800
 Group1.nrofHosts = 97
 Group1.nodeLocation = 10, 10
 
@@ -63,7 +63,7 @@ Group1.nodeLocation = 10, 10
 # How many event generators
 Events.nrof = 2
 # Class of the first event generator
-Events1.class = StandardEventsReader
+Events1.class = ExternalEventsQueue
 # (following settings are specific for the MessageEventGenerator class)
 # Creation interval in seconds (one new message every 25 to 35 seconds)
 Events1.filePath = RealityConnectionTraceFinal.txt
@@ -76,7 +76,7 @@ Events2.size = 20k
 # range of message source/destination addresses
 Events2.hosts = 0,96
 Events2.prefix = M
-Events2.time = 0, 6792726
+Events2.time = 0, 8470748
 
 ## Movement model settings
 # seed for movement models' pseudo random number generator (default = 0)
@@ -94,12 +94,12 @@ Report.warmup = 1
 # Report.reportDir = reports/COBA/PDF/Variansi/Reality/melebihkecildaripeer
 # Report.reportDir = reports/COBA/PDF/Closeness/Reality
 # Report.reportDir = reports/Baru/COBA/PDF/variansiBuffer/Reality
-Report.reportDir = reports/Baru2
+Report.reportDir = reports/Baru3
 # Report classes to load
 # Report.report1 = VarianceTiapNodeYangDitemuiReport
 # Report.report1 = BufferTiapNodeYangDitemuiReport
-# Report.report1 = VariansiBufferTiapNodeYangDitemuiReport
-Report.report1 = ClosenessTiapNodeYangDitemuiReport
+Report.report1 = VariansiBufferTiapNodeYangDitemuiReport
+# Report.report1 = ClosenessTiapNodeYangDitemuiReport
 # Report.report1 = VarianceTiapNodeYangDitemuiReport
 # Report.ToNodeID = [0;1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40;41;42;43;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;65;66;67;68;69;70;71;72;73;74;75;76;77;78;79;80;81;82;83;84;85;86;87;88;89;90;91;92;93;94;95;96]
 

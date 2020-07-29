@@ -35,7 +35,7 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
     private Map<DTNHost, List<Double>> bufferData;
     private Map<DTNHost, ArrayList<Double>> nodeComm;
     private Map<DTNHost, List<Double>> avgBuffer;
-    private List<Map<DTNHost, ArrayList<Double>>> data;
+    private  ArrayList<Double> data;
     private List<Map<DTNHost, Double>> datarata;
 
     private Double max;
@@ -52,7 +52,7 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
         bufferData = new HashMap<>();
         avgBuffer = new HashMap<>();
         nodeComm = new HashMap<>();
-        data = new LinkedList<>();
+        data = new ArrayList<>();
         datarata = new LinkedList<>();
     }
 
@@ -71,21 +71,30 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
             SimilarityDetectionEngine cd = (SimilarityDetectionEngine) de;
 //            List<Double> history;
             Map<DTNHost, ArrayList<Double>> temp = cd.getCloseness();
-            data.add(temp);
-
-        }
-        for (int i = 0; i < data.size(); i++) {
-            for (DTNHost node : nodes) {
-                if (data.get(i).containsKey(node)) {
-                    
-                    Double Buffer = avgBufferCalc(data.get(i).get(node));
-                    Map<DTNHost, Double> temp = new HashMap<>();
-                    temp.put(node, Buffer);
-                    datarata.add(temp);
+            for (Map.Entry<DTNHost, ArrayList<Double>> entry : temp.entrySet()) {
+                DTNHost key = entry.getKey();
+                ArrayList val = entry.getValue();
+                String output = "";
+                for (int i = 0; i < val.size(); i++) {
+                   output+=val.get(i)+"\n";                    
                 }
+                write(output);
             }
+            
+//            data.add(temp);
 
         }
+//        for (int i = 0; i < data.size(); i++) {
+//            for (DTNHost node : nodes) {
+//                if (data.get(i).containsKey(node)) {
+//                    Double Buffer = avgBufferCalc(data.get(i).get(node));
+//                    Map<DTNHost, Double> temp = new HashMap<>();
+//                    temp.put(node, Buffer);
+//                    datarata.add(temp);
+//                }
+//            }
+//
+//        }
 
 
 //        for (Map<DTNHost, ArrayList<Double>> map : data) {
@@ -96,20 +105,18 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
 //                    write(val.get(i)+"");                    
 //                    
 //                }
-//                
+//            }
+//        }
+//        for (Map<DTNHost, Double> map : datarata) {
+//            for (Map.Entry<DTNHost, Double> entry : map.entrySet()) {
+//                DTNHost key = entry.getKey();
+//                Double val = entry.getValue();
+//                write(val+"");
 //                
 //            }
 //        }
-        for (Map<DTNHost, Double> map : datarata) {
-            for (Map.Entry<DTNHost, Double> entry : map.entrySet()) {
-                DTNHost key = entry.getKey();
-                Double val = entry.getValue();
-                write(val+"");
-                
-            }
-        }
 
-
+//        write("Average Buffer  = " + avgValues);
         super.done();
     }
 
@@ -118,9 +125,6 @@ public class ClosenessTiapNodeYangDitemuiReport extends Report {
         double jumlah = 0;
         while (i.hasNext()) {
             Double d = i.next();
-            if(d.isNaN()){
-                continue;
-            }
             jumlah += d;
         }
 

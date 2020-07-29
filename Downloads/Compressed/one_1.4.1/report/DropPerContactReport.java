@@ -29,7 +29,7 @@ public class DropPerContactReport extends Report implements MessageListener, Con
     private int lastRecord;
     private int interval;
 //    private List<Double> drop;
-    private Map<Integer, String> nrofLatency;
+    private Map<Integer, String> nrofDrop;
 
     public DropPerContactReport() {
         init();
@@ -50,7 +50,7 @@ public class DropPerContactReport extends Report implements MessageListener, Con
         this.nrofDropped = 0;
         this.nrofRemoved = 0;
 //         this.drop = new ArrayList<Double>();
-        this.nrofLatency = new HashMap<>();
+        this.nrofDrop = new HashMap<>();
         
     }
     @Override
@@ -90,7 +90,7 @@ public class DropPerContactReport extends Report implements MessageListener, Con
         totalContact++;
         if (totalContact - lastRecord >= interval) {
             lastRecord = totalContact;
-            nrofLatency.put(lastRecord, String.valueOf(nrofDropped));
+            nrofDrop.put(lastRecord, String.valueOf(nrofDropped));
         }
     }
 
@@ -101,7 +101,7 @@ public class DropPerContactReport extends Report implements MessageListener, Con
      @Override
     public void done() {
         String statsText = "Contact\tDroppedMessage\n";
-        for (Map.Entry<Integer, String> entry : nrofLatency.entrySet()) {
+        for (Map.Entry<Integer, String> entry : nrofDrop.entrySet()) {
             Integer key = entry.getKey();
             String value = entry.getValue();
             statsText += key + "\t" + value + "\n";

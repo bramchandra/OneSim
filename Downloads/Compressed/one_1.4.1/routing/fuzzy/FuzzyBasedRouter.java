@@ -11,13 +11,11 @@ import core.Message;
 import core.Settings;
 import core.SimClock;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
@@ -25,7 +23,6 @@ import routing.MessageRouter;
 import routing.RoutingDecisionEngine;
 import routing.community.Duration;
 import routing.DecisionEngineRouter;
-import routing.community.VarianceDetectionEngine;
 import routing.community.ResourceDetectionEngine;
 import routing.community.SimilarityDetectionEngine;
 
@@ -33,7 +30,7 @@ import routing.community.SimilarityDetectionEngine;
  *
  * @author Afra Rian Yudianto, Sanata Dharma University
  */
-public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectionEngine {
+public class FuzzyBasedRouter implements RoutingDecisionEngine,ResourceDetectionEngine{
 
     public static final String FCL_NAMES_Similarity = "fclSimilarity";
     public static final String FCL_NAMES_Resource = "fclResource";
@@ -46,7 +43,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
     public static final String FUZZYSIMILARITY = "fuzzySimilarity";
     public static final String TRANSFER_OF_UTILITY = "hasil";
     private double lastRecord = Double.MIN_VALUE;
-    private int interval = 1000;
+    private int interval = 300;
     private FIS fclSimilarity;
     private FIS fclResource;
     private FIS fclFinal;
@@ -158,8 +155,8 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
 
         DTNHost dest = m.getTo();
         FuzzyBasedRouter de = getOtherDecisionEngine(otherHost);
-        Double me = this.rata2buffer;
-        Double peer = de.rata2buffer;
+        Double me = this.variansibuffer;
+        Double peer = de.variansibuffer;
 //        System.out.println(me);
         ArrayList<Double> data;
         if (!ambildata.containsKey(otherHost)) {
@@ -169,23 +166,23 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
         }
         data.add(me);
         ambildata.put(otherHost, data);
-        ArrayList<Double> data2;
-        if (!ambildata2.containsKey(otherHost)) {
-            data2 = new ArrayList<Double>();
-        } else {
-            data2 = ambildata2.get(otherHost);
-        }
-        data2.add(this.variansibuffer);
-        ambildata2.put(otherHost, data);
+//        ArrayList<Double> data2;
+//        if (!ambildata2.containsKey(otherHost)) {
+//            data2 = new ArrayList<Double>();
+//        } else {
+//            data2 = ambildata2.get(otherHost);
+//        }
+//        data2.add(this.variansibuffer);
+//        ambildata2.put(otherHost, data2);
 //        variance.add(this.getNormalizedVarianceOfNodes(dest));
-        return me > peer;
+        return me>peer;
     }
 
     private double DefuzzificationSimilarity(DTNHost dest) {
         double closenessValue = getClosenessOfNodes(dest);
         double varianceValue = getNormalizedVarianceOfNodes(dest);
-//        FunctionBlock functionBlock = fclSimilarity.getFunctionBlock("haggle3Infocom5ku");
-        FunctionBlock functionBlock = fclSimilarity.getFunctionBlock("realityku");
+        FunctionBlock functionBlock = fclSimilarity.getFunctionBlock("haggle3Infocom5ku");
+//        FunctionBlock functionBlock = fclSimilarity.getFunctionBlock("realityku");
         functionBlock.setVariable(CLOSENESS, closenessValue);
         functionBlock.setVariable(VARIANCE, varianceValue);
         functionBlock.evaluate();
@@ -200,8 +197,8 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
         double averageBufferValue = rata2buffer;
         double varianceValue = variansibuffer;
 //        System.out.println(rata2buffer);
-        FunctionBlock functionBlock = fclResource.getFunctionBlock("reality");
-//        FunctionBlock functionBlock = fclResource.getFunctionBlock("haggle3Infocom5");
+//        FunctionBlock functionBlock = fclResource.getFunctionBlock("reality");
+        FunctionBlock functionBlock = fclResource.getFunctionBlock("haggle3Infocom5");
 //        System.out.println(averageBufferValue+"\t"+varianceValue);
         functionBlock.setVariable(AVERAGEBUFFER, averageBufferValue);
         functionBlock.setVariable(VARIANCEBUFFER, varianceValue);
@@ -215,7 +212,8 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
     private double DefuzzificationFinal(DTNHost dest) {
         double similarity = DefuzzificationSimilarity(dest);
         double buffer = DefuzzificationBuffer();
-        FunctionBlock functionBlock = fclFinal.getFunctionBlock(null);
+//        FunctionBlock functionBlock = fclFinal.getFunctionBlock("reality");
+        FunctionBlock functionBlock = fclFinal.getFunctionBlock("haggle3Infocom5");
 
         functionBlock.setVariable(FUZZYSIMILARITY, similarity);
         functionBlock.setVariable(FUZZYBUFFER, buffer);
@@ -355,7 +353,7 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
         double simTime = SimClock.getTime();
         if (simTime - lastRecord >= interval) {
             sampelBuffer.add(thishost.getBufferOccupancy());
-            variansibuffer = getNormalizedVarianceBufferOfNodes(sampelBuffer);
+            variansibuffer = getVarianceBufferOfNodes(sampelBuffer);
             if (sampelBuffer.size() > 4) {
                 List temp = sampelBuffer.subList(sampelBuffer.size() - 5, sampelBuffer.size() - 1);
                 rata2buffer = getAverageBuffer(temp);
@@ -373,13 +371,13 @@ public class FuzzyBasedRouter implements RoutingDecisionEngine, ResourceDetectio
 
     @Override
     public Map<DTNHost,ArrayList<Double>> getVariansiBuffer() {
-        return ambildata2;
+        return ambildata;
     }
 //    @Override
 //    public Map<DTNHost,ArrayList<Double>> getCloseness() {
 //        return ambildata;
 //    }
-//
+////
 //    @Override
 //    public Map<DTNHost,ArrayList<Double>> getVariance() {
 //        return ambildata2;

@@ -39,9 +39,9 @@ Group.movementModel = StationaryMovement
 Group.router = DecisionEngineRouter
 # DecisionEngineRouter.decisionEngine = EpidemicDecisionRouter
 DecisionEngineRouter.decisionEngine = fuzzy.FuzzyBasedRouter
-DecisionEngineRouter.fclFinal = fcl/reality/Fuzzy.fcl
-DecisionEngineRouter.fclSimilarity = fcl/reality/Similarity.fcl
-DecisionEngineRouter.fclResource = fcl/reality/Resource2.fcl
+DecisionEngineRouter.fclFinal = fcl/fuzzy.fcl
+DecisionEngineRouter.fclSimilarity = fcl/Similarity.fcl
+DecisionEngineRouter.fclResource = fcl/Resource.fcl
 Group.bufferSize = 20M
 Group.waitTime = 0, 120
 # All nodes have the bluetooth interface
@@ -75,7 +75,7 @@ Events2.size = 20k
 # range of message source/destination addresses
 Events2.hosts = 0,96
 Events2.prefix = M
-Events2.time = 0, 16377016
+Events2.time = 0, 6792726
 
 ## Movement model settings
 # seed for movement models' pseudo random number generator (default = 0)
@@ -90,7 +90,7 @@ Report.nrofReports = 6
 # length of the warm up period (simulated seconds)
 Report.warmup = 1
 # default directory of reports (can be overridden per Report with output setting)
-Report.reportDir = reports/FuzzyFix/Reality/fuzzyFinal
+Report.reportDir = reports/Baru2/fuzzyFinal/reality
 # Report.reportDir = reports/FuzzyFix/Reality/fuzzyBuffer
 # Report classes to load
 Report.report1 = LatencyPerContactReport
